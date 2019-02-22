@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang=zh-CN>
+  <head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content>
+  
+    <link rel="icon" href>
+  
+    
+  <title>Go语言实战-读书笔记20190214 | Mr·陈</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class="logo" href="/">
+      <span>Mr·陈</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id="post">
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>Go语言实战-读书笔记20190214</h1>
+          <div class="post-meta">
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2019年02月14日</time>
+            
+              | <i class="fa fa-folder-open-o" aria-hidden="true"></i> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Go/">Go</a>
+  </div>
+
+
+
+            
+            
+              | 
+                  <i class="fa fa-tag" aria-hidden="true"></i>
+                
+               
+  <a href="/tags/#沉淀" class="tag">沉淀</a>
+
+
+            
+          </div>
+          <h1 id="第一章关于Go-语言的介绍"><a href="#第一章关于Go-语言的介绍" class="headerlink" title="第一章关于Go 语言的介绍"></a>第一章关于Go 语言的介绍</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>随着时代的发展，计算机的核数越来越多，但我们还在使用为单核设计的编程技术。Go 语言区别与其他编程语言的地方，更高效的利用了昂贵服务器上的核心；更快的编译速度；有着对传统面向对象思想独特的思考（用组合不用继承）。</p>
+<h2 id="Go解决了现在编程难题"><a href="#Go解决了现在编程难题" class="headerlink" title="Go解决了现在编程难题"></a>Go解决了现在编程难题</h2><h3 id="什么编程难题？"><a href="#什么编程难题？" class="headerlink" title="什么编程难题？"></a>什么编程难题？</h3><p>开发人员在为项目选择语言时，往往在性能和快速开发之间很难抉择。C、C++…快，python…可以快速开发，但GO语言不仅执行速度快，而且开发也快。</p>
+<h2 id="GO语言关键特性"><a href="#GO语言关键特性" class="headerlink" title="GO语言关键特性"></a>GO语言关键特性</h2><ul>
+<li><strong>开发速度</strong><ul>
+<li>编译速度快</li>
+<li>运行前编译器会检查类型错误</li>
+</ul>
+</li>
+<li><strong>并发</strong>（更高效的利用多核）<ul>
+<li>goroutine对并发的支持（占用的资源远少于线程）</li>
+<li>通道，让 goroutine 之间进行安全的数据通信<ul>
+<li>如果通过通道传输数据的一份副本，那么每个 goroutine 都持有一份副本，各自对自己的副本做修改是安全的</li>
+<li>当传输的是指向数据的指针时，如果读和写是由不同的 goroutine 完成的，每个 goroutine 依旧需要额外的同步动作</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Go 语言的类型系统</strong>（提供了灵活的、无继承的类型系统，无需降低运行性能就能最大程度上复用代码）<ul>
+<li>用组合设计模式，将一个类型嵌入到另一个类型，就能复用所有的功能</li>
+<li>独特的接口实现机制，允许用户对行为进行建模<ul>
+<li>Go 语言的接口更小，只倾向于定义一个单一的动作，这更有利于使用组合来复用代码</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>内存管理</strong><ul>
+<li>Go 语言把无趣的内存管理交给专业的编译器去做</li>
+</ul>
+</li>
+</ul>
+<h2 id="Go-Playground"><a href="#Go-Playground" class="headerlink" title="Go Playground"></a>Go Playground</h2><p>给想要学习写东西或寻求帮助的同事或者朋友演示某个想法时，Go Playground 是非常好的方式，因为它提供在线编译和分享功能。<br><strong>地址：</strong><a href="http://play.golang.org" target="_blank" rel="noopener">http://play.golang.org</a>  </p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><ul>
+<li>Go 语言是现代的、快速的，带有一个强大的标准库</li>
+<li>Go 语言内置对并发的支持</li>
+<li>Go 语言使用接口作为代码复用的基础模块</li>
+</ul>
+
+        </section>
+    </article>
+    
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#第一章关于Go-语言的介绍"><span class="toc-number">1.</span> <span class="toc-text">第一章关于Go 语言的介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Go解决了现在编程难题"><span class="toc-number">1.2.</span> <span class="toc-text">Go解决了现在编程难题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么编程难题？"><span class="toc-number">1.2.1.</span> <span class="toc-text">什么编程难题？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GO语言关键特性"><span class="toc-number">1.3.</span> <span class="toc-text">GO语言关键特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Go-Playground"><span class="toc-number">1.4.</span> <span class="toc-text">Go Playground</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-number">1.5.</span> <span class="toc-text">小结</span></a></li></ol></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2019 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>

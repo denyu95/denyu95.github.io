@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang=zh-CN>
+  <head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content>
+  
+    <link rel="icon" href>
+  
+    
+  <title>公司项目中Makefile的使用 | Mr·陈</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class="logo" href="/">
+      <span>Mr·陈</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id="post">
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>公司项目中Makefile的使用</h1>
+          <div class="post-meta">
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2019年02月22日</time>
+            
+            
+              | 
+                  <i class="fa fa-tag" aria-hidden="true"></i>
+                
+               
+  <a href="/tags/#随笔" class="tag">随笔</a>
+
+
+            
+          </div>
+          <h1 id="Makefile基本格式"><a href="#Makefile基本格式" class="headerlink" title="Makefile基本格式"></a>Makefile基本格式</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">target ... : prerequisites ...</span><br><span class="line">	command</span><br><span class="line">	...</span><br><span class="line">	...</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>target - 目标文件</p>
+</li>
+<li><p>prerequisites - 生成target所需要的文件</p>
+</li>
+<li><p>command - 需要执行的命令（shell命令），命令必须以【tab】开头</p>
+</li>
+</ul>
+<p><strong>Makefile的规则：</strong>prerequisites中如果有一个以上的文件比target文件要新的话，command所定义的命令就会被执行。</p>
+<blockquote>
+<p><strong>注意：</strong>JetBrains家的idea Tab键默认按出来是四个空格构成而不是制表符。</p>
+<p><strong>设置方法：</strong>Preferences-》Code Style-〉Other File Types 中选择Use tab character 点击Ok。</p>
+</blockquote>
+<h1 id="伪目标-amp-PHONY"><a href="#伪目标-amp-PHONY" class="headerlink" title="伪目标&amp;.PHONY"></a>伪目标&amp;.PHONY</h1><p>如果taget文件不存在，那么他会执行后面所定义的命令。这里我们只讨论伪目标，伪目标不会像真正的目标（target）一样生成一个目标文件。通常情况下.PHONY会与伪目标一起配合使用，目的是为了避免和同名文件冲突、改善性能。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">如果编写一个规则，并不产生目标文件，则其命令在每次make 该目标时都执行。例如：</span><br><span class="line">clean:</span><br><span class="line">	rm *.o temp</span><br><span class="line">因为&quot;rm&quot;命令并不产生&quot;clean&quot;文件，则每次执行&quot;make clean&quot;的时候，该命令都会执行。如果目录中出现了&quot;clean&quot;文件，则规则失效了：没有依赖文件，文件&quot;clean&quot;始终是最新的，命令永远不会 执行；为避免这个问题，可使用&quot;.PHONY&quot;指明该目标。如：</span><br><span class="line">.PHONY : clean</span><br><span class="line">这样执行&quot;make clean&quot;会无视&quot;clean&quot;文件存在与否。</span><br></pre></td></tr></table></figure>
+<h1 id="go-fmt-…"><a href="#go-fmt-…" class="headerlink" title="go fmt ./…"></a>go fmt ./…</h1><p>go官方文档说明：./…代表在当前文件夹下和旗下所有子文件，除vendor目录下的文件。  </p>
+<p>那么这个命令的意思就是格式化当前文件夹下和旗下所有子文件（除vendor目录下的文件）</p>
+<h1 id="MakeFile如何忽略错误"><a href="#MakeFile如何忽略错误" class="headerlink" title="MakeFile如何忽略错误"></a>MakeFile如何忽略错误</h1><p>在可能出错的命令前面加上-</p>
+<h1 id="如何一口气生成多个目标"><a href="#如何一口气生成多个目标" class="headerlink" title="如何一口气生成多个目标"></a>如何一口气生成多个目标</h1><p>Makefile中的第一个目标会被作为其默认目标。我们声明了一个“all”的伪目标，其依赖于其它n个目标。由于伪目标的特性是，总是被执行的，所以其依赖的那n个目标就总是不如“all”这个目标新。</p>
+<h1 id="Makefile文件事例"><a href="#Makefile文件事例" class="headerlink" title="Makefile文件事例"></a>Makefile文件事例</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.PHONY: all format clean</span><br><span class="line"></span><br><span class="line">all: clean format build-dev package</span><br><span class="line"></span><br><span class="line">clean:</span><br><span class="line">	rm -f main main.zip</span><br><span class="line"></span><br><span class="line">format:</span><br><span class="line">	go fmt ./...</span><br><span class="line">	-git clone https://github.com/golang/tools.git $(GOPATH)/src/golang.org/x/tools 2&gt;/dev/null</span><br><span class="line">	go install golang.org/x/tools/cmd/goimports</span><br><span class="line">	$(GOPATH)/bin/goimports -local=gitlab.oifitech.com -l -w `find . -type f -name &apos;*.go&apos; -not -path &apos;./vendor/*&apos;`</span><br><span class="line"></span><br><span class="line">build-dev:</span><br><span class="line">	GOOS=linux go build -tags dev main.go</span><br><span class="line"></span><br><span class="line">build-prod:</span><br><span class="line">	GOOS=linux go build -tags prod main.go</span><br><span class="line"></span><br><span class="line">package:</span><br><span class="line">	go get -v github.com/aws/aws-lambda-go/cmd/build-lambda-zip</span><br><span class="line">	$(GOPATH)/bin/build-lambda-zip main</span><br></pre></td></tr></table></figure>
+
+        </section>
+    </article>
+    
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Makefile基本格式"><span class="toc-number">1.</span> <span class="toc-text">Makefile基本格式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#伪目标-amp-PHONY"><span class="toc-number">2.</span> <span class="toc-text">伪目标&amp;.PHONY</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#go-fmt-…"><span class="toc-number">3.</span> <span class="toc-text">go fmt ./…</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#MakeFile如何忽略错误"><span class="toc-number">4.</span> <span class="toc-text">MakeFile如何忽略错误</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#如何一口气生成多个目标"><span class="toc-number">5.</span> <span class="toc-text">如何一口气生成多个目标</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Makefile文件事例"><span class="toc-number">6.</span> <span class="toc-text">Makefile文件事例</span></a></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2019 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>

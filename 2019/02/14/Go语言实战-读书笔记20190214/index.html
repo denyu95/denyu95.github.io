@@ -118,14 +118,12 @@
         </section>
     </article>
     
-        <!-- disqus 评论框 start -->
-        <div class="comment">
-            <div id="disqus_thread" class="disqus-thread">
-              <i>加载评论框需要翻墙</i>
-            </div>
-        </div>
-        <!-- disqus 评论框 end -->
     
+        <!-- livere 评论框 start -->
+        <div class="comment">
+            <div id="lv-container" data-id="city" data-uid="MTAyMC80MjgzNy8xOTM4NA=="></div>
+        </div>
+        <!-- livere 评论框 end -->
         
   </div>
   <aside>
@@ -140,46 +138,20 @@
   </aside>
 </main>
 
-<!-- disqus 公共JS代码 -->
+
 <script type="text/javascript">
-  /* * * CONFIGURATION VARIABLES * * */
-  var disqus_shortname = "denyu";
-  var disqus_identifier = "http://yoursite.com/2019/02/14/Go语言实战-读书笔记20190214/";
-  var disqus_url = "http://yoursite.com/2019/02/14/Go语言实战-读书笔记20190214/";
+  (function(d, s) {
+      var j, e = d.getElementsByTagName(s)[0];
 
-  isAgent(getDisqus)
+      if (typeof LivereTower === 'function') { return; }
 
-  // determine user agent in China
-  function isAgent(cb) {
-    var url = '//graph.facebook.com/feed?callback=h';
-    var xhr = new XMLHttpRequest();
-    var called = false;
-    xhr.open('GET', url);
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-      called = true;
-      cb(true);
-      }
-    };
-    xhr.send();
-    // timeout 1s, this facebook API is very fast.
-    setTimeout(function() {
-      if (!called) {
-      xhr.abort();
-      cb(false)
-      }
-    }, 1000);
-  }
+      j = d.createElement(s);
+      j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+      j.async = true;
 
-  function getDisqus(isAgent) {
-    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; 
-    dsq.async = true
-    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq)
-  }
+      e.parentNode.insertBefore(j, e);
+  })(document, 'script');
 </script>
-<!-- disqus 公共JS代码 end -->
-
 
 
   <footer>

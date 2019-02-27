@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang=zh-CN>
+  <head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content="denyu">
+  
+    <link rel="icon" href="/favicon.ico">
+  
+    
+  <title>Go语言实战-快速开始一个Go程序 | Mr·陈</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class="logo" href="/">
+      <span>Mr·陈</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id="post">
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>Go语言实战-快速开始一个Go程序</h1>
+          <div class="post-meta">
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2019年02月26日</time>
+            
+              | <i class="fa fa-folder-open-o" aria-hidden="true"></i> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Go/">Go</a>
+  </div>
+
+
+
+            
+            
+              | 
+                  <i class="fa fa-tag" aria-hidden="true"></i>
+                
+               
+  <a href="/tags/#沉淀" class="tag">沉淀</a>
+
+
+            
+          </div>
+          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>通过<a href="https://github.com/denyu95/go-in-action-code/tree/master/chapter2/sample" target="_blank" rel="noopener">例子</a>学习</p>
+<ol>
+<li>如何声明类型、变量、函数、方法</li>
+<li>启动并同步操作goroutine</li>
+<li>使用接口写通用的代码</li>
+<li>处理程序逻辑和错误</li>
+</ol>
+<h2 id="功能简介"><a href="#功能简介" class="headerlink" title="功能简介"></a>功能简介</h2><p>该例子从不同的数据源拉取数据，将数据与检索项做对比，然后将匹配内容显示在终端窗口。该程序会读取文本文件，进行网络调用，解码XML和JSON成结构化类型数据，并用上并发机制来保障速度。</p>
+<h2 id="程序架构"><a href="#程序架构" class="headerlink" title="程序架构"></a>程序架构</h2><p><img src="./架构图.jpg" alt="架构图"></p>
+<h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">- sample</span><br><span class="line">	- data</span><br><span class="line">		data.json -- 包含一组数据源</span><br><span class="line">	- matchers</span><br><span class="line">		rss.go -- 搜索 rss 源的匹配器</span><br><span class="line">	- search</span><br><span class="line">		default.go -- 搜索数据用的默认匹配器</span><br><span class="line">		feed.go -- 用于读取 json 数据文件</span><br><span class="line">		match.go -- 用于支持不同匹配器的接口</span><br><span class="line">		search.go -- 执行搜索的主控制逻辑</span><br><span class="line">	main.go -- 程序的入口</span><br></pre></td></tr></table></figure>
+<h2 id="重点讲解"><a href="#重点讲解" class="headerlink" title="重点讲解"></a>重点讲解</h2><h3 id="程序入口"><a href="#程序入口" class="headerlink" title="程序入口"></a>程序入口</h3><p>程序的入口有两个特征：</p>
+<ol>
+<li>包名为main</li>
+<li>名为main的函数</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="包"><a href="#包" class="headerlink" title="包"></a>包</h3><p>包的名字类似于命名空间，可间接访问包内声明的标识符。同一个文件夹里的代码文件，必须使用同一个包名。这个特性可把不同包中定义的同名标识符区分开。</p>
+<p>注意到下述代码中，包前加下划线。这是为了让Go语言对包做初始化操作（init函数），但是并不使用包里的标识符。Go编译器不允许导入包而不使用，下划线可让编译器接受这类导入。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"log"</span></span><br><span class="line">    </span><br><span class="line">    _ <span class="string">"github.com/denyu95/go-in-action-code/chapter2/sample/matchers"</span></span><br><span class="line">    <span class="string">"github.com/denyu95/go-in-action-code/chapter2/sample/search"</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h3 id="init-函数"><a href="#init-函数" class="headerlink" title="init 函数"></a>init 函数</h3><p>init函数都会在main函数执行前调用。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">	log.SetOutput(os.Stdout)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="编译器如何找包"><a href="#编译器如何找包" class="headerlink" title="编译器如何找包"></a>编译器如何找包</h3><p>编译器查找包的时候，总是会到 GOROOT 和 GOPATH 环境变量引用的位置去查找。</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">GOROOT="/Users/me/go"</span><br><span class="line">GOPATH="/Users/me/spaces/go/projects"</span><br></pre></td></tr></table></figure>
+<h3 id="声明类型"><a href="#声明类型" class="headerlink" title="声明类型"></a>声明类型</h3><p>声明一个结构类型</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Feed <span class="keyword">struct</span> &#123;</span><br><span class="line">    Name <span class="keyword">string</span> <span class="string">`json:"site"`</span></span><br><span class="line">    URI  <span class="keyword">string</span> <span class="string">`json:"link"`</span></span><br><span class="line">    Type <span class="keyword">string</span> <span class="string">`json:"type"`</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>声明最后 ` 引号里的部分被称作标记（tag）。这个标记描述了JSON解码的元数据，每个标记对应JSON文档中指定名字的字段。</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"site"</span> : <span class="string">"cnn"</span>,</span><br><span class="line">    <span class="attr">"link"</span> : <span class="string">"http://rss.cnn.com/rss/cnn_world.rss"</span>,</span><br><span class="line">    <span class="attr">"type"</span> : <span class="string">"rss"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="声明变量"><a href="#声明变量" class="headerlink" title="声明变量"></a>声明变量</h3><ul>
+<li>变量使用关键字 var声明</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> matchers = <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]Matcher)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>简化变量声明运算符（:=）</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">feeds, err := RetrieveFeeds()</span><br></pre></td></tr></table></figure>
+<p>(:=)只是一种简化记法，让代码可读性更高。(:=)与 var 无区别。据经验，若声明初始值为零值的变量，应使用 var ；若声明初始值非零值的变量或者使用函数返回值创建变量，应该使用(:=)。</p>
+<p>标识符首字母是小写的，代表不对外公开。反之首字母大写代表对外公开。不对外公开的标识符可通过间接的方式访问到。例如，通过函数返回一个未公开的值。</p>
+<p>若map变量声明改为如下，会怎么样呢？</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> matchers = <span class="keyword">map</span>[<span class="keyword">string</span>]Matcher</span><br></pre></td></tr></table></figure>
+<p>在使用matchers时会收到报错信息。这是因为map变量的默认零值是nil，所以要先通过make来构造map并将构造后的值赋值给变量。</p>
+<h3 id="声明函数"><a href="#声明函数" class="headerlink" title="声明函数"></a>声明函数</h3><p>关键字func声明函数，结构是 func + 函数名 + 参数（可无） + 返回值（可无） + 函数体。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Run</span><span class="params">(searchTerm <span class="keyword">string</span>)</span></span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="声明方法"><a href="#声明方法" class="headerlink" title="声明方法"></a>声明方法</h3><p>结构是 func + 接收者 + 函数名 + 参数 + 返回值 + 函数体。</p>
+<p>实现接口方法时候需要注意case3，如果通过接口类型的值调用方法，使用指针作为接收者声明的方法，只能在接口类型的值是一个指针的时<br>候被调用 。</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> defaultMatcher <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line"><span class="comment">// case 1</span></span><br><span class="line"><span class="comment">// 方法接收者为类型值的指针</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *defaultMatcher)</span> <span class="title">Search</span><span class="params">(feed *Feed, searchTerm <span class="keyword">string</span>)</span></span></span><br><span class="line"><span class="function">// 第一种声明类型值，第二种声明类型值的指针。都可以成功调用<span class="title">Search</span></span></span><br><span class="line"><span class="function"><span class="title">var</span> <span class="title">dm</span> <span class="title">defaultMatch</span> 或 <span class="title">dm</span> := <span class="title">new</span><span class="params">(defaultMatch)</span></span></span><br><span class="line">dm.Search(feed, "test")</span><br><span class="line"></span><br><span class="line"><span class="comment">// case 2</span></span><br><span class="line"><span class="comment">// 方法接收者为类型值</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m defaultMatcher)</span> <span class="title">Search</span><span class="params">(feed *Feed, searchTerm <span class="keyword">string</span>)</span></span></span><br><span class="line"><span class="function">// 第一种声明类型值，第二种声明类型值的指针。都可以成功调用<span class="title">Search</span></span></span><br><span class="line"><span class="function"><span class="title">var</span> <span class="title">dm</span> <span class="title">defaultMatch</span> 或 <span class="title">dm</span> := <span class="title">new</span><span class="params">(defaultMatch)</span></span></span><br><span class="line">dm.Search(feed, "test")</span><br><span class="line"></span><br><span class="line">---------------------------------------------------------------------------------------------</span><br><span class="line"></span><br><span class="line"><span class="comment">// case 3</span></span><br><span class="line"><span class="comment">// 方法接收者为类型值的指针，通过接口类型调用方法</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *defaultMatcher)</span> <span class="title">Search</span><span class="params">(feed *Feed, searchTerm <span class="keyword">string</span>)</span></span></span><br><span class="line"><span class="function"><span class="title">var</span> <span class="title">dm</span> <span class="title">defaultMatch</span></span></span><br><span class="line"><span class="function">// 第一种接口类型的值为值，第二种接口类型的值为指针。只有第二种成功调用<span class="title">Search</span></span></span><br><span class="line"><span class="function">// 第一种报错 <span class="title">cannot</span> <span class="title">use</span> <span class="title">dm</span> <span class="params">(<span class="keyword">type</span> defaultMatcher)</span> <span class="title">as</span> <span class="title">type</span> <span class="title">Matcher</span> <span class="title">in</span> <span class="title">assignment</span></span></span><br><span class="line"><span class="function"><span class="title">var</span> <span class="title">matcher</span> <span class="title">Matcher</span> = <span class="title">dm</span> 或 <span class="title">var</span> <span class="title">matcher</span> <span class="title">Matcher</span> = &amp;<span class="title">dm</span></span></span><br><span class="line">dm.Search(feed, "test")</span><br><span class="line"></span><br><span class="line"><span class="comment">// case 4</span></span><br><span class="line"><span class="comment">// 方法接收者为类型值，通过接口类型调用方法</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m defaultMatcher)</span> <span class="title">Search</span><span class="params">(feed *Feed, searchTerm <span class="keyword">string</span>)</span></span></span><br><span class="line"><span class="function"><span class="title">var</span> <span class="title">dm</span> <span class="title">defaultMatch</span></span></span><br><span class="line"><span class="function">// 第一种接口类型的值为值，第二种接口类型的值为指针。都可以成功调用<span class="title">Search</span></span></span><br><span class="line"><span class="function"><span class="title">var</span> <span class="title">matcher</span> <span class="title">Matcher</span> = <span class="title">dm</span> 或 <span class="title">var</span> <span class="title">matcher</span> <span class="title">Matcher</span> = &amp;<span class="title">dm</span></span></span><br><span class="line">dm.Search(feed, "test")</span><br></pre></td></tr></table></figure>
+<h3 id="启动并同步操作goroutine"><a href="#启动并同步操作goroutine" class="headerlink" title="启动并同步操作goroutine"></a>启动并同步操作goroutine</h3><p>非常推荐使用 sync包中的WaitGroup 来跟踪 goroutine 的工作是否完成。WaitGroup 是一个计数信号量，我们可以利用它来统计所有的goroutine 是不是都完成了工作。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建一个无缓冲的通道，接收匹配后的结果</span></span><br><span class="line">results := <span class="built_in">make</span>(<span class="keyword">chan</span> *Result)</span><br><span class="line"><span class="keyword">var</span> waitGroup sync.WaitGroup</span><br><span class="line"><span class="comment">// len(feeds)的数量等于启动goroutine的数量</span></span><br><span class="line">waitGroup.Add(<span class="built_in">len</span>(feeds))</span><br></pre></td></tr></table></figure>
+<p>goroutine完成工作后，会通过<code>waitGroup.Done()</code>递减waitGroup的计数值。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 为每个数据源启动一个 goroutine 来查找结果</span></span><br><span class="line"><span class="keyword">for</span> _, feed := <span class="keyword">range</span> feeds &#123;</span><br><span class="line">...</span><br><span class="line">	<span class="comment">// 启动一个 goroutine 来执行搜索</span></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(matcher Matcher, feed *Feed)</span></span> &#123;</span><br><span class="line">        Match(matcher, feed, searchTerm, results)</span><br><span class="line">        waitGroup.Done()</span><br><span class="line">	&#125;(matcher, feed)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>启动一个监控所有goroutine都完成工作的goroutine，利用WaitGroup的 Wait 方法。这个方法会导致 goroutine阻塞，直到 WaitGroup 内部的计数到达0。之后，goroutine 调用了内置的 close 函数，关闭了通道，最终导致程序终止。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">go</span> <span class="function"><span class="keyword">func</span> <span class="params">()</span></span> &#123;</span><br><span class="line">    waitGroup.Wait()</span><br><span class="line">    <span class="built_in">close</span>(results)</span><br><span class="line">&#125;()</span><br><span class="line"><span class="comment">// 通道会一直被阻塞，直到有结果写入</span></span><br><span class="line"><span class="comment">// 一旦通道被关闭，for 循环就会终止</span></span><br><span class="line"><span class="keyword">for</span> result := <span class="keyword">range</span> results &#123;</span><br><span class="line">	fmt.Printf(<span class="string">"%s:\n%s\n\n"</span>, result.Field, result.Content)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="使用接口写通用的代码"><a href="#使用接口写通用的代码" class="headerlink" title="使用接口写通用的代码"></a>使用接口写通用的代码</h3><p>声明接口类型</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Matcher <span class="keyword">interface</span> &#123;</span><br><span class="line">    Search(feed *Feed, searchTerm <span class="keyword">string</span>) ([]*Result, error)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>命名接口的时候，需要遵守 Go 语言的命名惯例。如果接口类型只包含一个方法，类型的名字以 er 结尾。如果接口类型内部声明了多个方法，其名字需要与其行为关联。</p>
+<p>实现接口</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> defaultMatcher <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m defaultMatcher)</span> <span class="title">Search</span><span class="params">(feed *Feed, searchTerm <span class="keyword">string</span>)</span> <span class="params">([]*Result, error)</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如下函数，可以接收实现了Macher接口的defaultMatcher类型作为传参。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Match</span><span class="params">(matcher Matcher, feed *Feed, searchTerm <span class="keyword">string</span>, results <span class="keyword">chan</span>&lt;- *Result)</span></span> &#123;</span><br><span class="line">	searchResults, err := matcher.Search(feed, searchTerm)</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="处理程序逻辑和错误"><a href="#处理程序逻辑和错误" class="headerlink" title="处理程序逻辑和错误"></a>处理程序逻辑和错误</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line">document, err := m.retrieve(feed)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><ul>
+<li>每个代码文件都属于一个包，而包名应该与代码文件所在的文件夹同名。</li>
+<li>Go 语言提供了多种声明和初始化变量的方式。如果变量的值没有显式初始化，编译器会将变量初始化为零值。</li>
+<li>使用指针可以在函数间或者 goroutine 间共享数据。</li>
+<li>通过启动 goroutine 和使用通道完成并发和同步。</li>
+<li>Go 语言提供了内置函数来支持 Go 语言内部的数据结构。</li>
+<li>使用 Go 接口可以编写通用的代码和框架。</li>
+</ul>
+
+        </section>
+    </article>
+    
+    
+        <!-- livere 评论框 start -->
+        <div class="comment">
+            <div id="lv-container" data-id="city" data-uid="MTAyMC80MjgzNy8xOTM4NA=="></div>
+        </div>
+        <!-- livere 评论框 end -->
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#功能简介"><span class="toc-number">2.</span> <span class="toc-text">功能简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#程序架构"><span class="toc-number">3.</span> <span class="toc-text">程序架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#项目结构"><span class="toc-number">4.</span> <span class="toc-text">项目结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#重点讲解"><span class="toc-number">5.</span> <span class="toc-text">重点讲解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#程序入口"><span class="toc-number">5.1.</span> <span class="toc-text">程序入口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#包"><span class="toc-number">5.2.</span> <span class="toc-text">包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#init-函数"><span class="toc-number">5.3.</span> <span class="toc-text">init 函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#编译器如何找包"><span class="toc-number">5.4.</span> <span class="toc-text">编译器如何找包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#声明类型"><span class="toc-number">5.5.</span> <span class="toc-text">声明类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#声明变量"><span class="toc-number">5.6.</span> <span class="toc-text">声明变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#声明函数"><span class="toc-number">5.7.</span> <span class="toc-text">声明函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#声明方法"><span class="toc-number">5.8.</span> <span class="toc-text">声明方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动并同步操作goroutine"><span class="toc-number">5.9.</span> <span class="toc-text">启动并同步操作goroutine</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用接口写通用的代码"><span class="toc-number">5.10.</span> <span class="toc-text">使用接口写通用的代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#处理程序逻辑和错误"><span class="toc-number">5.11.</span> <span class="toc-text">处理程序逻辑和错误</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-number">6.</span> <span class="toc-text">小结</span></a></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+<script type="text/javascript">
+  (function(d, s) {
+      var j, e = d.getElementsByTagName(s)[0];
+
+      if (typeof LivereTower === 'function') { return; }
+
+      j = d.createElement(s);
+      j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+      j.async = true;
+
+      e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2019 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>

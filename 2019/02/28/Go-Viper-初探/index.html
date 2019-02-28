@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang=zh-CN>
+  <head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content="denyu">
+  
+    <link rel="icon" href="/favicon.ico">
+  
+    
+  <title>Go Viper - 初探 | Mr·陈</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class="logo" href="/">
+      <span>Mr·陈</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id="post">
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>Go Viper - 初探</h1>
+          <div class="post-meta">
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2019年02月28日</time>
+            
+              | <i class="fa fa-folder-open-o" aria-hidden="true"></i> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Go/">Go</a>
+  </div>
+
+
+
+            
+            
+              | 
+                  <i class="fa fa-tag" aria-hidden="true"></i>
+                
+               
+  <a href="/tags/#随笔" class="tag">随笔</a>
+
+
+            
+          </div>
+          <h2 id="什么是Viper？"><a href="#什么是Viper？" class="headerlink" title="什么是Viper？"></a>什么是Viper？</h2><p>Viper是配置文件的解决方案。支持：</p>
+<ul>
+<li>设置默认配置。</li>
+<li>从 JSON，TOML，YAML，HCL，Java properties 的文件中读取配置。</li>
+<li>实时重新读取配置文件。</li>
+<li>从远程读取配置，可观察到配置文件的改变。</li>
+<li>从命令行参数读取配置（command line flags）</li>
+<li>从缓存中读取配置</li>
+<li>设置明确值的配置</li>
+</ul>
+<h2 id="Viper读取配置优先级"><a href="#Viper读取配置优先级" class="headerlink" title="Viper读取配置优先级"></a>Viper读取配置优先级</h2><ul>
+<li>Set明确设置的配置</li>
+<li>io.Reader读取配置</li>
+<li>命令行参数</li>
+<li>环境变量</li>
+<li>配置文件</li>
+<li>key/value存储</li>
+<li>默认配置</li>
+</ul>
+<h2 id="Viper使用示例"><a href="#Viper使用示例" class="headerlink" title="Viper使用示例"></a>Viper使用示例</h2><h3 id="Set明确设置的配置"><a href="#Set明确设置的配置" class="headerlink" title="Set明确设置的配置"></a>Set明确设置的配置</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 优先级最高，覆盖其他来源的denyu配置</span></span><br><span class="line">viper.Set(<span class="string">"denyu"</span>, <span class="string">"陈宇"</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="io-Reader中读取配置"><a href="#io-Reader中读取配置" class="headerlink" title="io.Reader中读取配置"></a>io.Reader中读取配置</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line">viper.SetConfigType(<span class="string">"yaml"</span>)</span><br><span class="line"><span class="keyword">var</span> yamlExample = []<span class="keyword">byte</span>(<span class="string">`</span></span><br><span class="line"><span class="string">name: denyu</span></span><br><span class="line"><span class="string">hobbies:</span></span><br><span class="line"><span class="string">- go</span></span><br><span class="line"><span class="string">- java</span></span><br><span class="line"><span class="string">clothing:</span></span><br><span class="line"><span class="string">	jacket: leather</span></span><br><span class="line"><span class="string">`</span>)</span><br><span class="line"></span><br><span class="line">viper.ReadConfig(bytes.NewBuffer(yamlExample))</span><br><span class="line"></span><br><span class="line">viper.Get(<span class="string">"name"</span>) <span class="comment">// this would be "denyu"</span></span><br></pre></td></tr></table></figure>
+<h3 id="命令行读取配置"><a href="#命令行读取配置" class="headerlink" title="命令行读取配置"></a>命令行读取配置</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line">pflag.Int(<span class="string">"flagname"</span>, <span class="number">1234</span>, <span class="string">"help message for flagname"</span>)</span><br><span class="line"></span><br><span class="line">pflag.Parse()</span><br><span class="line">viper.BindPFlags(pflag.CommandLine)</span><br><span class="line"></span><br><span class="line">i := viper.GetInt(<span class="string">"flagname"</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 一般程序用的都是内置flag</span></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"flag"</span></span><br><span class="line">	<span class="string">"github.com/spf13/pflag"</span></span><br><span class="line">    ...</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	flag.Int(<span class="string">"flagname"</span>, <span class="number">1234</span>, <span class="string">"help message for flagname"</span>)</span><br><span class="line">    </span><br><span class="line">	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)</span><br><span class="line">	pflag.Parse()</span><br><span class="line">	viper.BindPFlags(pflag.CommandLine)</span><br><span class="line"></span><br><span class="line">	i := viper.GetInt(<span class="string">"flagname"</span>)</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="环境变量中读取配置"><a href="#环境变量中读取配置" class="headerlink" title="环境变量中读取配置"></a>环境变量中读取配置</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// case 1</span></span><br><span class="line"><span class="comment">// 这里环境变量的名字必须大写</span></span><br><span class="line">viper.SetEnvPrefix(<span class="string">"sss"</span>)</span><br><span class="line">BindEnv(<span class="string">"id"</span>)</span><br><span class="line">os.Setenv(<span class="string">"SSS_ID"</span>, <span class="string">"0001"</span>)</span><br><span class="line">id := Get(<span class="string">"id"</span>) <span class="comment">// 0001</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// case 2</span></span><br><span class="line"><span class="comment">// 如果BindEnv传第二个参数则不加前缀</span></span><br><span class="line"><span class="comment">// 环境变量名不一定大写</span></span><br><span class="line">viper.SetEnvPrefix(<span class="string">"sss"</span>)</span><br><span class="line">BindEnv(<span class="string">"id"</span>, <span class="string">"sSs_Id"</span>)</span><br><span class="line">os.Setenv(<span class="string">"sSs_Id"</span>, <span class="string">"0001"</span>)</span><br><span class="line">id := Get(<span class="string">"id"</span>) <span class="comment">// 0001</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// case 3</span></span><br><span class="line">os.Setenv(<span class="string">"SSS_ID"</span>, <span class="string">"0001"</span>) </span><br><span class="line">viper.AutomaticEnv()</span><br><span class="line">id := viper.Get(<span class="string">"sss_id"</span>) <span class="comment">// 0001</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// case 4</span></span><br><span class="line">SetEnvPrefix(<span class="string">"sss"</span>) </span><br><span class="line">os.Setenv(<span class="string">"SSS_ID"</span>, <span class="string">"0001"</span>) </span><br><span class="line">viper.AutomaticEnv()</span><br><span class="line">id := viper.Get(<span class="string">"id"</span>) <span class="comment">// 0001</span></span><br></pre></td></tr></table></figure>
+<h3 id="配置文件中读取配置"><a href="#配置文件中读取配置" class="headerlink" title="配置文件中读取配置"></a>配置文件中读取配置</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line">viper.SetConfigName(<span class="string">"config"</span>)</span><br><span class="line">viper.AddConfigPath(<span class="string">"."</span>)</span><br><span class="line">err := viper.ReadInConfig()</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="built_in">panic</span>(err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="远程key-value读取配置"><a href="#远程key-value读取配置" class="headerlink" title="远程key/value读取配置"></a>远程key/value读取配置</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">"port"</span>: <span class="number">8080</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">viper.AddRemoteProvider(<span class="string">"consul"</span>, <span class="string">"localhost:8500"</span>, <span class="string">"MY_CONSUL_KEY"</span>)</span><br><span class="line">viper.SetConfigType(<span class="string">"json"</span>) </span><br><span class="line">err := viper.ReadRemoteConfig()</span><br><span class="line"></span><br><span class="line">fmt.Println(viper.Get(<span class="string">"port"</span>)) <span class="comment">// 8080</span></span><br></pre></td></tr></table></figure>
+<h3 id="默认配置"><a href="#默认配置" class="headerlink" title="默认配置"></a>默认配置</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line">viper.SetDefault(<span class="string">"denyu"</span>, <span class="string">"陈宇"</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="实时重新读取配置文件"><a href="#实时重新读取配置文件" class="headerlink" title="实时重新读取配置文件"></a>实时重新读取配置文件</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line">  </span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"sync"</span></span><br><span class="line"></span><br><span class="line">    <span class="string">"github.com/spf13/viper"</span></span><br><span class="line">    <span class="string">"github.com/fsnotify/fsnotify"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> waitGroup sync.WaitGroup</span><br><span class="line">    waitGroup.Add(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    viper.SetConfigName(<span class="string">"config"</span>)</span><br><span class="line">    viper.AddConfigPath(<span class="string">"."</span>)</span><br><span class="line">    err := viper.ReadInConfig()</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    	<span class="built_in">panic</span>(fmt.Errorf(<span class="string">"Fatal error config file: %s \n"</span>, err))</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 实时重新读取配置文件</span></span><br><span class="line">    viper.WatchConfig()</span><br><span class="line">    <span class="comment">// 如果文件配置文件发生改变就会触发</span></span><br><span class="line">    viper.OnConfigChange(<span class="function"><span class="keyword">func</span><span class="params">(e fsnotify.Event)</span></span> &#123;</span><br><span class="line">        fmt.Println(<span class="string">"Config file changed:"</span>, e.Name)</span><br><span class="line">        fmt.Println(viper.Get(<span class="string">"denyu"</span>))</span><br><span class="line">    &#125;)</span><br><span class="line">    </span><br><span class="line">    fmt.Println(viper.Get(<span class="string">"denyu"</span>))</span><br><span class="line">    </span><br><span class="line">    waitGroup.Wait()</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="comment">// 控制台打印数据如下</span></span><br><span class="line">	<span class="comment">// 陈宇</span></span><br><span class="line"><span class="comment">// 当改变config.json文件时控制台打印如下</span></span><br><span class="line">    <span class="comment">// Config file changed: /Users/mike/go/src/github.com/demo/config.json</span></span><br><span class="line">    <span class="comment">// 陈宇1</span></span><br></pre></td></tr></table></figure>
+<h3 id="使用别名"><a href="#使用别名" class="headerlink" title="使用别名"></a>使用别名</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line">viper.RegisterAlias(<span class="string">"dy"</span>, <span class="string">"mk"</span>)</span><br><span class="line"></span><br><span class="line">viper.Set(<span class="string">"dy"</span>, <span class="string">"denyu"</span>)</span><br><span class="line">viper.Set(<span class="string">"mk"</span>, <span class="string">"mike"</span>)</span><br><span class="line"></span><br><span class="line">viper.Get(<span class="string">"dy"</span>) <span class="comment">// denyu</span></span><br><span class="line">viper.Get(<span class="string">"mk"</span>) <span class="comment">// mike</span></span><br></pre></td></tr></table></figure>
+
+        </section>
+    </article>
+    
+    
+        <!-- livere 评论框 start -->
+        <div class="comment">
+            <div id="lv-container" data-id="city" data-uid="MTAyMC80MjgzNy8xOTM4NA=="></div>
+        </div>
+        <!-- livere 评论框 end -->
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是Viper？"><span class="toc-number">1.</span> <span class="toc-text">什么是Viper？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Viper读取配置优先级"><span class="toc-number">2.</span> <span class="toc-text">Viper读取配置优先级</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Viper使用示例"><span class="toc-number">3.</span> <span class="toc-text">Viper使用示例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Set明确设置的配置"><span class="toc-number">3.1.</span> <span class="toc-text">Set明确设置的配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#io-Reader中读取配置"><span class="toc-number">3.2.</span> <span class="toc-text">io.Reader中读取配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#命令行读取配置"><span class="toc-number">3.3.</span> <span class="toc-text">命令行读取配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#环境变量中读取配置"><span class="toc-number">3.4.</span> <span class="toc-text">环境变量中读取配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置文件中读取配置"><span class="toc-number">3.5.</span> <span class="toc-text">配置文件中读取配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#远程key-value读取配置"><span class="toc-number">3.6.</span> <span class="toc-text">远程key/value读取配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#默认配置"><span class="toc-number">3.7.</span> <span class="toc-text">默认配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实时重新读取配置文件"><span class="toc-number">3.8.</span> <span class="toc-text">实时重新读取配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用别名"><span class="toc-number">3.9.</span> <span class="toc-text">使用别名</span></a></li></ol></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+<script type="text/javascript">
+  (function(d, s) {
+      var j, e = d.getElementsByTagName(s)[0];
+
+      if (typeof LivereTower === 'function') { return; }
+
+      j = d.createElement(s);
+      j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+      j.async = true;
+
+      e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2019 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>

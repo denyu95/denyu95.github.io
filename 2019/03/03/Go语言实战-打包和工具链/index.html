@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang=zh-CN>
+  <head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content="denyu">
+  
+    <link rel="icon" href="/favicon.ico">
+  
+    
+  <title>Go语言实战-打包和工具链 | Mr·陈</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class="logo" href="/">
+      <span>Mr·陈</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id="post">
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>Go语言实战-打包和工具链</h1>
+          <div class="post-meta">
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2019年03月03日</time>
+            
+              | <i class="fa fa-folder-open-o" aria-hidden="true"></i> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Go/">Go</a>
+  </div>
+
+
+
+            
+            
+              | 
+                  <i class="fa fa-tag" aria-hidden="true"></i>
+                
+               
+  <a href="/tags/#沉淀" class="tag">沉淀</a>
+
+
+            
+          </div>
+          <h2 id="包"><a href="#包" class="headerlink" title="包"></a>包</h2><p>所有的Go语言都会被组织成若干组文件，每组文件被称为一个包。同一个目录下的所有.go 文件必须声明同一个包名。</p>
+<h3 id="包命名的惯例"><a href="#包命名的惯例" class="headerlink" title="包命名的惯例"></a>包命名的惯例</h3><p>给包命名的惯例就是使用包所在目录的名字。这会让用户在导入包的时候，就可以清晰地知道包名。给包及其目录命名时，应该使用简洁、清晰且全小写的名字，这有利于开发时频繁输入包名。</p>
+<p>当包名不为目录名：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">工程目录如下：</span><br><span class="line">.</span><br><span class="line">├── config.json</span><br><span class="line">├── main.<span class="keyword">go</span></span><br><span class="line">└── usb</span><br><span class="line">    ├── doc.<span class="keyword">go</span></span><br><span class="line">    └── driver.<span class="keyword">go</span></span><br><span class="line"><span class="comment">// 其中usb目录下的go文件，包名设置为usb_1。</span></span><br><span class="line"><span class="comment">// 在main.go中使用driver下的函数，代码如下所示：</span></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"github.com/demo/usb"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 这样调用，包名和导入的目录名不一致，会导致代码不清晰。</span></span><br><span class="line">    usb_1.Retrieve()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="main-包"><a href="#main-包" class="headerlink" title="main 包"></a>main 包</h3><p>当一个包的名字为main时，那么一定会发现名为main()的函数。Go语言会试图把命名为main的包编译为二进制可执行文件。</p>
+<blockquote>
+<p>Go 文档中常使用命令（command）这个词来指代可执行程序。作为对比，包常用来指语义上可导入的单元功能。</p>
+</blockquote>
+<h3 id="导入包"><a href="#导入包" class="headerlink" title="导入包"></a>导入包</h3><p>导入包需要关键字import。如果导入多个包，则将import语句包装到一个导入块中。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"os"</span></span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>标准库中的包会在Go的安装位置（GOROOT）找到，Go开发者创建的包会在GOPATH路径下找到。</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">GOROOT=/usr/local/Cellar/go/1.11.2/libexec</span><br><span class="line">GOPATH=/Users/mike/go</span><br></pre></td></tr></table></figure>
+<h3 id="远程导入"><a href="#远程导入" class="headerlink" title="远程导入"></a>远程导入</h3><p>目前的大势所趋是，使用分布式版本控制系统（Distributed Version Control Systems，DVCS）来分享代码，如Github、Launchpad还有Bitbucket。Go工具链本身支持从这些网站上及类似网站获取源代码。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 如果要 import "github.com/spf13/viper"</span></span><br><span class="line"><span class="comment">// 使用如下命令</span></span><br><span class="line"><span class="comment">// 这个命令会扫描某个包的源码树，获取能找到的所有依赖包</span></span><br><span class="line"><span class="keyword">go</span> get <span class="string">"github.com/spf13/viper"</span></span><br></pre></td></tr></table></figure>
+<h3 id="命名导入"><a href="#命名导入" class="headerlink" title="命名导入"></a>命名导入</h3><p>如果导入两个以上相同名字的包，如fmt和mylib/fmt，这种情况下，重名的包可以通过命名导入来导入。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">    myfmt <span class="string">"mylib/fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    fmt.Println(<span class="string">"标准库fmt"</span>)</span><br><span class="line">    myfmt.Println(<span class="string">"自定义fmt"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="函数init"><a href="#函数init" class="headerlink" title="函数init"></a>函数init</h2><p>所有被编译器发现的init 函数都会在 main 函数之前执行。一般是为了要在程序运行前优先完成引导工作。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 这段示例代码包含在 PostgreSQL 数据库的驱动里</span></span><br><span class="line"><span class="comment">// 如果程序导入了这个包，就会调用 init 函数</span></span><br><span class="line"><span class="comment">// 促使 PostgreSQL 的驱动最终注册到 Go 的 sql 包里，成为一个可用的驱动。</span></span><br><span class="line"><span class="keyword">package</span> postgres</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"database/sql"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">	sql.Register(<span class="string">"postgres"</span>, <span class="built_in">new</span>(PostgresDriver))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><figcaption><span>package main0203 import (04 "database/sql"0506 _ "github.com/goinaction/code/chapter3/dbdriver/postgres"07 )0809 func main() &#123;10 sql.Open("postgres", "mydb")11 &#125; </span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment">// 使用空白标识符重命名这个导入可以让 init 函数发现并被调度运行</span></span><br><span class="line"><span class="comment">// 这样就可以调用 sql.Open 方法来使用 PostgreSQL 驱动</span></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"database/sql"</span></span><br><span class="line">    </span><br><span class="line">    _ <span class="string">"github.com/goinaction/code/chapter3/dbdriver/postgres"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	sql.Open(<span class="string">"postgres"</span>, <span class="string">"mydb"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="使用Go的工具"><a href="#使用Go的工具" class="headerlink" title="使用Go的工具"></a>使用Go的工具</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">go</span> build - 编译</span><br><span class="line"><span class="keyword">go</span> clean - 清除编译后的可执行文件</span><br><span class="line"><span class="keyword">go</span> run - 编译运行</span><br><span class="line"><span class="keyword">go</span> vet ./... - 检查代码常见错误</span><br><span class="line"><span class="keyword">go</span> fmt ./... - 格式化代码</span><br><span class="line"><span class="keyword">go</span> doc - 查阅xx包的相关文档</span><br><span class="line">godoc -http=:<span class="number">6060</span> - 浏览器 http:<span class="comment">//localhost:6060 查看相关文档</span></span><br></pre></td></tr></table></figure>
+<h2 id="与其他Go开发者合作"><a href="#与其他Go开发者合作" class="headerlink" title="与其他Go开发者合作"></a>与其他Go开发者合作</h2><ol>
+<li>包应该在代码库的根目录，包名应该就是代码库的名字</li>
+<li>包可以非常小</li>
+<li>对代码执行go fmt</li>
+<li>给代码写文档</li>
+</ol>
+<h2 id="依赖管理"><a href="#依赖管理" class="headerlink" title="依赖管理"></a>依赖管理</h2><p>官方推荐的Dep管理包依赖（支持Go1.9及以上版本）</p>
+<p>MacOS</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span> brew install dep</span><br></pre></td></tr></table></figure>
+<p>或</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">go</span> get -u github.com/golang/dep/cmd/dep</span><br></pre></td></tr></table></figure>
+<p>这样就有dep命令可以使用了，最常用的就两条命令：dep init和dep ensure。</p>
+<ol>
+<li>对于新项目，执行dep init命令生成dep配置文件（Gopkg.lock Gopkg.toml ）和 vendor目录。提交代码时，也会把Gopkg.*和vendor目录提交。</li>
+<li>在开发过程中，若增改了依赖，一条dep ensure就可以搞定。</li>
+</ol>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><ul>
+<li>在Go语言中包是组织代码的基本单位。</li>
+<li>环境变量 GOPATH 决定了 Go 源代码在磁盘上被保存、编译和安装的位置。</li>
+<li>开发人员可以使用 go get 来获取别人的包并将其安装到自己的 GOPATH 指定的目录</li>
+<li>想要为别人创建包很简单，只要把源代码放到公用代码库，并遵守一些简单规则就可以了。</li>
+<li>Go 语言在设计时将分享代码作为语言的核心特性和驱动力。</li>
+<li>推荐使用dep管理工具来管理依赖。</li>
+</ul>
+
+        </section>
+    </article>
+    
+    
+        <!-- livere 评论框 start -->
+        <div class="comment">
+            <div id="lv-container" data-id="city" data-uid="MTAyMC80MjgzNy8xOTM4NA=="></div>
+        </div>
+        <!-- livere 评论框 end -->
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#包"><span class="toc-number">1.</span> <span class="toc-text">包</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#包命名的惯例"><span class="toc-number">1.1.</span> <span class="toc-text">包命名的惯例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#main-包"><span class="toc-number">1.2.</span> <span class="toc-text">main 包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#导入包"><span class="toc-number">1.3.</span> <span class="toc-text">导入包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#远程导入"><span class="toc-number">1.4.</span> <span class="toc-text">远程导入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#命名导入"><span class="toc-number">1.5.</span> <span class="toc-text">命名导入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#函数init"><span class="toc-number">2.</span> <span class="toc-text">函数init</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用Go的工具"><span class="toc-number">3.</span> <span class="toc-text">使用Go的工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#与其他Go开发者合作"><span class="toc-number">4.</span> <span class="toc-text">与其他Go开发者合作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#依赖管理"><span class="toc-number">5.</span> <span class="toc-text">依赖管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-number">6.</span> <span class="toc-text">小结</span></a></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+<script type="text/javascript">
+  (function(d, s) {
+      var j, e = d.getElementsByTagName(s)[0];
+
+      if (typeof LivereTower === 'function') { return; }
+
+      j = d.createElement(s);
+      j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+      j.async = true;
+
+      e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2019 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>

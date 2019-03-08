@@ -11,6 +11,8 @@
   
     
   <title>Mr·陈</title>
+  <script src="lib/jquery.js"></script>
+  <script src="/js/script.js"></script>
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -286,11 +288,13 @@
     
     <div class="search">
       <div class="content">
-        <form action="//www.google.com/search" target="_blank" class="search-form">
-          <input type="text" name="q" maxlength="20" placeholder="搜索">
-          <input type="hidden" name="sitesearch" value="http://yoursite.com">
-        </form>
+	<form id="search-form">
+	  <input type="text" id="local-search-input" name="q" results="0" placeholder="站内搜索..." class="search form-control" autocomplete="off" autocorrect="off">
+	  <i class="fa-times" onclick="resetSearch()">清空查询条件</i>	
+	</form>
       </div>
+      <div id="local-search-result"></div>
+      <p class="no-result">查不到哦，换个关键字试试^.^</p>
     </div>
     
     

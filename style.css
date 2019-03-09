@@ -762,6 +762,9 @@ header {
   .paging .paging-container {
     width: 100%; } }
 
+.search {
+  position: relative; }
+
 /*搜索重置按钮*/
 #search-form .fa-times {
   font: normal normal normal 14px/1 FontAwesome;
@@ -786,9 +789,9 @@ header {
   position: absolute;
   background: #ffffff;
   border: 1px solid #00f0f0;
-  border-radius: 10px;
-  left: 15px;
-  right: 0px; }
+  left: 0px;
+  right: 0px;
+  z-index: 10; }
 
 #local-search-result ul {
   padding-inline-start: 10px; }
@@ -837,10 +840,10 @@ p.no-result {
   position: absolute;
   background: #ffffff;
   border: 1px solid #00f0f0;
-  border-radius: 10px;
-  left: 15px;
+  left: 0px;
   right: 0px;
-  margin-block-start: 0em; }
+  margin-block-start: 0em;
+  z-index: 10; }
 
 #tags .tags-container {
   width: 66%;

@@ -21,6 +21,8 @@ var searchFunc = function(path, search_id, content_id) {
                 var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
                 $resultContent.innerHTML = "";
                 if (this.value.trim().length <= 0) {
+                    urls = [];
+                    $("#local-search-result").hide();
                     return;
                 }
                 // perform local searching
@@ -53,7 +55,7 @@ var searchFunc = function(path, search_id, content_id) {
                     // show search results
                     if (isMatch) {
                         urls.push(data_url);
-                        str += "<li><a href='"+ data_url +"' class='search-result-title' target='_blank'>"+ "> " + data_title +"</a>";
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'  target='_Self'>"+ "> " + data_title +"</a>";
                         var content = data.content.trim().replace(/<[^>]+>/g,"");
                         if (first_occur >= 0) {
                             // cut out characters
@@ -79,7 +81,6 @@ var searchFunc = function(path, search_id, content_id) {
                     }
                 })
                 $resultContent.innerHTML = str;
-                console.log(urls.length)
                 if (urls.length == 0) {
                     $("#local-search-result").hide();
                 } else {
@@ -128,7 +129,7 @@ window.onload=function(){
 
     $resultArea.bind("DOMNodeRemoved DOMNodeInserted", function(e) {
         if (!$(e.target).text()) {
-            $(".no-result").show(200);
+            $(".no-result").show();
         } else {
             $(".no-result").hide();
         }

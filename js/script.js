@@ -93,7 +93,9 @@ var searchFunc = function(path, search_id, content_id) {
 window.onload=function(){
     var path = "/search.xml";
     var inputArea = document.querySelector("#local-search-input");
-
+    if (inputArea == null) {
+	return
+    }
     inputArea.onfocus = function(){ 
         searchFunc(path, 'local-search-input', 'local-search-result');
     }

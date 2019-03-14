@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>Go语言实战-类型系统</title>
+      <link href="/2019/03/15/Go%E8%AF%AD%E8%A8%80%E5%AE%9E%E6%88%98-%E7%B1%BB%E5%9E%8B%E7%B3%BB%E7%BB%9F/"/>
+      <url>/2019/03/15/Go%E8%AF%AD%E8%A8%80%E5%AE%9E%E6%88%98-%E7%B1%BB%E5%9E%8B%E7%B3%BB%E7%BB%9F/</url>
+      
+        <content type="html"><![CDATA[<h2 id="用户定义的类型"><a href="#用户定义的类型" class="headerlink" title="用户定义的类型"></a>用户定义的类型</h2><p>声明结构类型</p><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> admin <span class="keyword">struct</span> &#123;</span><br><span class="line">    level<span class="keyword">int</span></span><br><span class="line">    personuser</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> user <span class="keyword">struct</span> &#123;</span><br><span class="line">    name<span class="keyword">string</span></span><br><span class="line">    age<span class="keyword">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>声明变量</p><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> mike user</span><br></pre></td></tr></table></figure><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 第一种方式</span></span><br><span class="line">mike := user&#123;</span><br><span class="line">    name:<span class="string">"Mike"</span>,</span><br><span class="line">    age:<span class="number">24</span>,</span><br><span class="line">&#125;</span><br><span class="line">root := admin&#123;</span><br><span class="line">    person: user&#123;</span><br><span class="line">        name:<span class="string">"Mike"</span>,</span><br><span class="line">        age:<span class="number">24</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">    level:<span class="number">1</span>,</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 第二种方式</span></span><br><span class="line">mike := user&#123;<span class="string">"Mike"</span>, <span class="number">24</span>&#125;</span><br></pre></td></tr></table></figure><p>基于内置类型声明一个新类型</p><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Duration <span class="keyword">int64</span></span><br></pre></td></tr></table></figure><blockquote><p>虽然int64是Duration的基础类型，但是int64与Duration是不同的类型。</p></blockquote><p>不同类型的变量赋值会报错</p><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Error</span></span><br><span class="line"><span class="keyword">type</span> Duration <span class="keyword">int64</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> dur Duration</span><br><span class="line">    dur = <span class="keyword">int64</span>(<span class="number">1000</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><h2 id="类型的本质"><a href="#类型的本质" class="headerlink" title="类型的本质"></a>类型的本质</h2>]]></content>
+      
+      
+      <categories>
+          
+          <category> Go </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Go实战 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Spring DI &amp; AOP</title>
       <link href="/2019/03/11/Spring-DI-AOP/"/>
       <url>/2019/03/11/Spring-DI-AOP/</url>

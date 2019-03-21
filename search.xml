@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>linux常用命令-持续更新</title>
+      <link href="/2019/03/21/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4-%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0/"/>
+      <url>/2019/03/21/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4-%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0/</url>
+      
+        <content type="html"><![CDATA[<h5 id="查看当前文件夹全路径"><a href="#查看当前文件夹全路径" class="headerlink" title="查看当前文件夹全路径"></a>查看当前文件夹全路径</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">pwd</span><br></pre></td></tr></table></figure><h5 id="查看文件目录下的文件列表"><a href="#查看文件目录下的文件列表" class="headerlink" title="查看文件目录下的文件列表"></a>查看文件目录下的文件列表</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ls</span><br></pre></td></tr></table></figure><h5 id="查看文件目录下的文件列表-详细信息"><a href="#查看文件目录下的文件列表-详细信息" class="headerlink" title="查看文件目录下的文件列表(详细信息)"></a>查看文件目录下的文件列表(详细信息)</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ls -alF</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> 环境变量中配置 alias ll='ls -alF'</span><br><span class="line"><span class="meta">#</span> 即可使用 ll 替代 ls -alF</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> linux </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> linux-cmd </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Go语言实战-类型系统</title>
       <link href="/2019/03/15/Go%E8%AF%AD%E8%A8%80%E5%AE%9E%E6%88%98-%E7%B1%BB%E5%9E%8B%E7%B3%BB%E7%BB%9F/"/>
       <url>/2019/03/15/Go%E8%AF%AD%E8%A8%80%E5%AE%9E%E6%88%98-%E7%B1%BB%E5%9E%8B%E7%B3%BB%E7%BB%9F/</url>

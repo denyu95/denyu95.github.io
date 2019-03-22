@@ -80,15 +80,16 @@
 
             
           </div>
-          <h2 id="僵尸进程产生的原因"><a href="#僵尸进程产生的原因" class="headerlink" title="僵尸进程产生的原因"></a>僵尸进程产生的原因</h2><p>当一个进程被终止，其父进程和内核还是需要知道进程的有些信息，如进程的ID号、进程的退出状态、进程运行的CPU时间等。进程在终止时回收内核分配给它的内存、关闭它打开的所有文件等，但还是会保留极少信息，以供父进程使用。父进程调用wait/waitid获取子进程信息以释放保留的那段信息。  </p>
+          <h2 id="僵尸进程产生的原因"><a href="#僵尸进程产生的原因" class="headerlink" title="僵尸进程产生的原因"></a>僵尸进程产生的原因</h2><p>当一个进程被终止，其父进程和内核还是需要知道进程的有些信息，如进程的ID号、进程的退出状态、进程运行的CPU时间等。进程在终止时回收内核分配给它的内存、关闭它打开的所有文件等，但还是会保留极少信息，以供父进程使用。父进程调用 wait / waitid 获取子进程信息以释放保留的那段信息。 </p>
 <p>原因</p>
 <ol>
 <li>子进程终止后向父进程发出SIGCHLD信号，父进程默认忽略了它。</li>
-<li>父进程没有调用wait()或waitid()函数来等待子进程结束。<h2 id="僵尸进程的危害"><a href="#僵尸进程的危害" class="headerlink" title="僵尸进程的危害"></a>僵尸进程的危害</h2>僵尸进程虽然占用系统资源少，但是如果数量多的话，一样会严重影响到服务器性能。<h2 id="僵尸进程如何kill"><a href="#僵尸进程如何kill" class="headerlink" title="僵尸进程如何kill"></a>僵尸进程如何kill</h2>查看僵尸进程<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ps -aux |grep Z</span><br><span class="line"><span class="meta">#</span> STAT为Z说明是僵尸进程</span><br></pre></td></tr></table></figure>
-</li>
+<li>父进程没有调用wait()或waitid()函数来等待子进程结束。</li>
 </ol>
+<h2 id="僵尸进程的危害"><a href="#僵尸进程的危害" class="headerlink" title="僵尸进程的危害"></a>僵尸进程的危害</h2><p>僵尸进程虽然占用系统资源少，但是如果数量多的话，一样会严重影响到服务器性能。</p>
+<h2 id="僵尸进程如何kill"><a href="#僵尸进程如何kill" class="headerlink" title="僵尸进程如何kill"></a>僵尸进程如何kill</h2><p>查看僵尸进程<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ps -aux |grep Z</span><br><span class="line"><span class="meta">#</span> STAT为Z说明是僵尸进程</span><br></pre></td></tr></table></figure></p>
 <p>查看僵尸进程的数量<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">top|head -n 2</span><br><span class="line"><span class="meta">#</span> zombie的数量就是僵尸进程的数量</span><br></pre></td></tr></table></figure></p>
-<h3 id="普通僵尸进程"><a href="#普通僵尸进程" class="headerlink" title="普通僵尸进程"></a>普通僵尸进程</h3><p>手动杀死父进程后，由系统init进程回收。<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ps -ef|grep PID</span><br><span class="line">kill -9 PPID</span><br><span class="line"><span class="meta">#</span> 此处PID为僵尸进程的pid，查询得到PPID。</span><br><span class="line"><span class="meta">#</span> 杀死父进程PPID</span><br></pre></td></tr></table></figure></p>
+<h3 id="普通僵尸进程"><a href="#普通僵尸进程" class="headerlink" title="普通僵尸进程"></a>普通僵尸进程</h3><p>手动杀死父进程后，由系统init进程回收。<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ps -ef|grep PID</span><br><span class="line">kill -9 PPID</span><br><span class="line"><span class="meta">#</span> 此处PID为僵尸进程的，通过ps命令查询可得到PPID。</span><br><span class="line"><span class="meta">#</span> 杀死父进程的PPID</span><br></pre></td></tr></table></figure></p>
 <h3 id="PPID为1的僵尸进程"><a href="#PPID为1的僵尸进程" class="headerlink" title="PPID为1的僵尸进程"></a>PPID为1的僵尸进程</h3><p>暂时没有好的解决方式，需要重启主机。</p>
 
         </section>

@@ -8,7 +8,7 @@
       <link href="/2019/04/04/Go%E8%AF%AD%E8%A8%80%E5%AE%9E%E6%88%98-%E5%B9%B6%E5%8F%91/"/>
       <url>/2019/04/04/Go%E8%AF%AD%E8%A8%80%E5%AE%9E%E6%88%98-%E5%B9%B6%E5%8F%91/</url>
       
-        <content type="html"><![CDATA[<h2 id="线程与进程"><a href="#线程与进程" class="headerlink" title="线程与进程"></a>线程与进程</h2><p>进程是个容器，其存放内存地址空间、文件和设备的句柄、线程等等。线程是个执行空间，这个空间会被操作系统调度来执行代码。</p><p><img src="进程与线程.jpg" alt="进程与线程"></p>]]></content>
+        <content type="html"><![CDATA[<h2 id="线程与进程"><a href="#线程与进程" class="headerlink" title="线程与进程"></a>线程与进程</h2><p>进程是个容器，其存放内存地址空间、文件和设备的句柄、线程等等。线程是个执行空间，这个空间会被操作系统调度来执行代码。</p><p><img src="进程与线程.jpg" alt="进程与线程"></p><h2 id="Goroutine运作方式"><a href="#Goroutine运作方式" class="headerlink" title="Goroutine运作方式"></a>Goroutine运作方式</h2><p>运行一个goroutine：</p><ol><li>将这个goroutine放在调度器全局的运行队列上。</li><li>调度器将队列中的goroutine分配给一个逻辑处理器，逻辑处理器都绑定在单个线程上。</li><li>goroutine会被放到逻辑处理器的本地运行队列中，等待执行。</li></ol><p>goroutine遇到阻塞：</p><ol><li>线程阻塞，等待操作系统返回。线程和正在运行的goroutine会从逻辑处理器上分离。</li><li>调度器会创建一个新线程，并将其绑定到之前的逻辑处理器上。</li><li>调度器会从本地运行队列选择goroutine继续执行。</li></ol><p><img src="Goroutine运作方式.png" alt="Goroutine运作方式"></p><h2 id="并行与并发"><a href="#并行与并发" class="headerlink" title="并行与并发"></a>并行与并发</h2><p>并行是让不同的代码片段同时在不同的物理处理器上执行。</p><p>并发是同时管理很多事情，这些事情可能做一半就被暂停去做别的事情了。</p>]]></content>
       
       
       <categories>

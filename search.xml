@@ -4,6 +4,25 @@
   
     
     <entry>
+      <title>ubuntu开机不启动图形界面</title>
+      <link href="/2019/04/25/ubuntu%E5%BC%80%E6%9C%BA%E4%B8%8D%E5%90%AF%E5%8A%A8%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/"/>
+      <url>/2019/04/25/ubuntu%E5%BC%80%E6%9C%BA%E4%B8%8D%E5%90%AF%E5%8A%A8%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/</url>
+      
+        <content type="html"><![CDATA[<ol><li><p>关闭用户图形界面，使用tty(终端设备的统称)登陆。</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo systemctl set-default multi-user.target</span><br><span class="line">sudo reboot</span><br></pre></td></tr></table></figure></li><li><p>开启用户图形界面。</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo systemctl set-default graphical.target</span><br><span class="line">sudo reboot</span><br></pre></td></tr></table></figure></li></ol>]]></content>
+      
+      
+      <categories>
+          
+          <category> Linux </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>配置命令行翻墙开关</title>
       <link href="/2019/04/25/%E9%85%8D%E7%BD%AE%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%BF%BB%E5%A2%99%E5%BC%80%E5%85%B3/"/>
       <url>/2019/04/25/%E9%85%8D%E7%BD%AE%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%BF%BB%E5%A2%99%E5%BC%80%E5%85%B3/</url>

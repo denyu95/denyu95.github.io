@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang=zh-CN>
+  <head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content="denyu">
+  
+    <link rel="icon" href="/favicon.ico">
+  
+    
+  <title>定制go get的包路径 | Mr·陈</title>
+  <script src="/lib/jquery.js"></script>
+  <script src="/js/script.js"></script>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class="logo" href="/">
+      <span>Mr·陈</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id="post">
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>定制go get的包路径</h1>
+          <div class="post-meta">
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2019年04月29日</time>
+            
+              | <i class="fa fa-folder-open-o" aria-hidden="true"></i> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Go/">Go</a>
+  </div>
+
+
+
+            
+            
+              | 
+                  <i class="fa fa-tag" aria-hidden="true"></i>
+                
+               
+  <a href="/tags/#随笔" class="tag">随笔</a>
+
+
+            
+          </div>
+          <h2 id="缘由"><a href="#缘由" class="headerlink" title="缘由"></a>缘由</h2><p>当工程使用gitlab作为代码管理工具，各个工程会按照群组分类，但代码中引入包名的时候却不希望路径带有群组，又或者gitlab域名带有端口号。这样go get下来的路径会不美观。如：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span> 项目路径为</span><br><span class="line">https://xxx.xxx.com:90/Gxxx/xxx</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> Go get后go/src下的目录结构为</span><br><span class="line">xxx.xxx.com:90/Gxxx/xxx</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> 项目中却希望以如下方式引入包</span><br><span class="line">xxx.xxx.com/xxx</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>⚠️注意：</p>
+<p>若想要go get gitlab上的项目，需要在命令行执行如下命令。<br><code>git config --global url.&quot;git@xxx.xxx.com:&quot;.insteadOf &quot;https://xxx.xxx.com:90/&quot;</code><br>在~/.gitconfig文件中查看是否配置成功。</p>
+</blockquote>
+<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>利用反向代理将xxx.xxx.com:90/Gxxx映射到xxx.xxx.com上，本地只要go get xxx.xxx.com/xxx会去真实的路径上拉取代码。</p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><ol>
+<li><p>前置条件</p>
+ <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">1. 阿里云服务器一台（centos）</span><br><span class="line">2. 服务器配置好go环境</span><br><span class="line">3. 执行go get github.com/denyu95/govanityurls</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>路径映射</p>
+ <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span> 路径映射由govanityurls项目完成，启动govanityurls即可。（监听8080端口）</span><br><span class="line">1. 在root目录下创建govanityurls目录。</span><br><span class="line">2. 放入vanity.yaml配置文件。</span><br><span class="line">3. 使用Supervisord守护进程的工具启动govanityurls。</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>代理转发</p>
+ <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span> 配置nginx代理转发 80端口-》8080端口</span><br><span class="line">1. https 需要申请证书</span><br><span class="line">2. 得到 xxx.xxx.pem 和 xxx.xxx.key 放到 /etc/nginx/ssl 目录下</span><br><span class="line">3. 启动nginx</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置文件</p>
+<p> vanity.yaml</p>
+ <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">/gowechat:</span></span><br><span class="line"><span class="attr">        repo:</span> <span class="attr">https://github.com/xxx/gowechat</span></span><br><span class="line"><span class="string">/subscriptionserver:</span></span><br><span class="line"><span class="attr">        repo:</span> <span class="attr">https://xxx.xxx.com:90/xxx/subscriptionserver</span></span><br></pre></td></tr></table></figure>
+<p> supervisord.d/govanityurls.ini</p>
+ <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[program:govanityurls]</span><br><span class="line">directory = /root/govanityurls</span><br><span class="line">command = /root/go/bin/govanityurls -host xxx.xxx.com</span><br><span class="line">autostart = true</span><br><span class="line">startsecs = 5</span><br><span class="line">autorestart = true</span><br><span class="line">startretries = 3</span><br><span class="line">user = root</span><br><span class="line">redirect_stderr = true</span><br><span class="line">stdout_logfile_maxbytes = 20MB</span><br><span class="line">stdout_logfile_backups = 20</span><br><span class="line">stopasgroup=false</span><br><span class="line">killasgroup=false</span><br><span class="line">stdout_logfile = /root/log/go.log</span><br></pre></td></tr></table></figure>
+<p> nginx.conf</p>
+ <figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">        <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">        <span class="attribute">listen</span> <span class="number">443</span> ssl;</span><br><span class="line">        <span class="attribute">server_name</span> xxx.xxx.com;</span><br><span class="line"></span><br><span class="line">        <span class="attribute">ssl_certificate</span>           /etc/nginx/ssl/xxx.xxx.pem;</span><br><span class="line">        <span class="attribute">ssl_certificate_key</span>       /etc/nginx/ssl/xxx.xxx.key;</span><br><span class="line"></span><br><span class="line">        <span class="attribute">location</span> / &#123;</span><br><span class="line">                <span class="attribute">proxy_pass</span> http://127.0.0.1:8080;</span><br><span class="line">                <span class="attribute">proxy_redirect</span> <span class="literal">off</span>;</span><br><span class="line">                <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</span><br><span class="line">               <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">                <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line"></span><br><span class="line">                <span class="attribute">proxy_http_version</span> <span class="number">1</span>.<span class="number">1</span>;</span><br><span class="line">                <span class="attribute">proxy_set_header</span> Upgrade <span class="variable">$http_upgrade</span>;</span><br><span class="line">                <span class="attribute">proxy_set_header</span> Connection <span class="string">"upgrade"</span>;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><p>团队需要维护vanity.yaml配置文件，需要不断补充项目映射关系。</p>
+
+        </section>
+    </article>
+    
+    
+        <!-- livere 评论框 start -->
+        <div class="comment">
+            <div id="lv-container" data-id="city" data-uid="MTAyMC80MjgzNy8xOTM4NA=="></div>
+        </div>
+        <!-- livere 评论框 end -->
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#缘由"><span class="toc-number">1.</span> <span class="toc-text">缘由</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#思路"><span class="toc-number">2.</span> <span class="toc-text">思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现"><span class="toc-number">3.</span> <span class="toc-text">实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#补充"><span class="toc-number">4.</span> <span class="toc-text">补充</span></a></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+<script type="text/javascript">
+  (function(d, s) {
+      var j, e = d.getElementsByTagName(s)[0];
+
+      if (typeof LivereTower === 'function') { return; }
+
+      j = d.createElement(s);
+      j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+      j.async = true;
+
+      e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2019 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>

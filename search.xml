@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>vim_1</title>
+      <link href="/2019/06/04/vim-1/"/>
+      <url>/2019/06/04/vim-1/</url>
+      
+        <content type="html"><![CDATA[<ol><li>保存编辑结果<br><code>命令行模式输入 ZZ，等同于ex命令 :wq</code></li><li>消除所有编辑结果<br><code>ex命令 :e!</code></li><li>消除所有编辑结果，并离开vim<br><code>ex命令 :q!</code></li><li>vim执行unix命令（三种方式）<br><code>1.ex命令 :!xxx 如 :!df</code><br><code>2.ex命令 :sh，CTRL-D或输入exit回到vim</code><br><code>3.CTRL-Z暂停vim，输入fg回到vim</code></li></ol>]]></content>
+      
+      
+      <categories>
+          
+          <category> Linux </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> vim </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>定制go get的包路径</title>
       <link href="/2019/04/29/%E5%AE%9A%E5%88%B6go-get%E7%9A%84%E5%8C%85%E8%B7%AF%E5%BE%84/"/>
       <url>/2019/04/29/%E5%AE%9A%E5%88%B6go-get%E7%9A%84%E5%8C%85%E8%B7%AF%E5%BE%84/</url>

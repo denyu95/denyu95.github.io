@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang=zh-CN>
+  <head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content="denyu">
+  
+    <link rel="icon" href="/favicon.ico">
+  
+    
+  <title>MySQL 某字段分组后，其他字段以逗号隔开 | Mr·陈</title>
+  <script src="/lib/jquery.js"></script>
+  <script src="/js/script.js"></script>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class="logo" href="/">
+      <span>Mr·陈</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id="post">
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>MySQL 某字段分组后，其他字段以逗号隔开</h1>
+          <div class="post-meta">
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2019年07月24日</time>
+            
+              | <i class="fa fa-folder-open-o" aria-hidden="true"></i> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/MySQL/">MySQL</a>
+  </div>
+
+
+
+            
+            
+          </div>
+          <h2 id="建表"><a href="#建表" class="headerlink" title="建表"></a>建表</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">CREATE TABLE student (</span><br><span class="line">	age INT,</span><br><span class="line">	name VARCHAR(20)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h2 id="造数据"><a href="#造数据" class="headerlink" title="造数据"></a>造数据</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">INSERT INTO </span><br><span class="line">	student(age, name)</span><br><span class="line">VALUES</span><br><span class="line">	(15, &apos;陈x&apos;),</span><br><span class="line">	(16, &apos;冯xx&apos;),</span><br><span class="line">	(15, &apos;郑xx&apos;),</span><br><span class="line">	(16, &apos;王xx&apos;),</span><br><span class="line">	(15, &apos;刘xx&apos;)</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">age</th>
+<th style="text-align:center">name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">15</td>
+<td style="text-align:center">陈x</td>
+</tr>
+<tr>
+<td style="text-align:center">16</td>
+<td style="text-align:center">冯xx</td>
+</tr>
+<tr>
+<td style="text-align:center">15</td>
+<td style="text-align:center">郑xx</td>
+</tr>
+<tr>
+<td style="text-align:center">16</td>
+<td style="text-align:center">王xx</td>
+</tr>
+<tr>
+<td style="text-align:center">15</td>
+<td style="text-align:center">刘xx</td>
+</tr>
+</tbody>
+</table>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT </span><br><span class="line">	age, GROUP_CONCAT(name SEPARATOR &apos;,&apos;) AS names </span><br><span class="line">FROM</span><br><span class="line">	student</span><br><span class="line">GROUP BY</span><br><span class="line">	age</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">age</th>
+<th style="text-align:center">names</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">15</td>
+<td style="text-align:center">陈x,郑xx,刘xx</td>
+</tr>
+<tr>
+<td style="text-align:center">16</td>
+</tr>
+</tbody>
+</table>
+
+        </section>
+    </article>
+    
+    
+        <!-- livere 评论框 start -->
+        <div class="comment">
+            <div id="lv-container" data-id="city" data-uid="MTAyMC80MjgzNy8xOTM4NA=="></div>
+        </div>
+        <!-- livere 评论框 end -->
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#建表"><span class="toc-number">1.</span> <span class="toc-text">建表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#造数据"><span class="toc-number">2.</span> <span class="toc-text">造数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现"><span class="toc-number">3.</span> <span class="toc-text">实现</span></a></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+<script type="text/javascript">
+  (function(d, s) {
+      var j, e = d.getElementsByTagName(s)[0];
+
+      if (typeof LivereTower === 'function') { return; }
+
+      j = d.createElement(s);
+      j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+      j.async = true;
+
+      e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2019 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>

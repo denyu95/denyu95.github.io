@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang=zh-CN>
+  <head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content="denyu">
+  
+    <link rel="icon" href="/favicon.ico">
+  
+    
+  <title>读Go源码-log/log.go | Mr·陈</title>
+  <script src="/lib/jquery.js"></script>
+  <script src="/js/script.js"></script>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class="logo" href="/">
+      <span>Mr·陈</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id="post">
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>读Go源码-log/log.go</h1>
+          <div class="post-meta">
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2019年08月10日</time>
+            
+              | <i class="fa fa-folder-open-o" aria-hidden="true"></i> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Go/">Go</a>
+  </div>
+
+
+
+            
+            
+              | 
+                  <i class="fa fa-tag" aria-hidden="true"></i>
+                
+               
+  <a href="/tags/#读源码" class="tag">读源码</a>
+
+
+            
+          </div>
+          <h2 id="雨点"><a href="#雨点" class="headerlink" title="雨点"></a>雨点</h2><ul>
+<li>iota 常量计数器</li>
+<li>sync.Mutex 互斥锁</li>
+<li>单引号与双引号的区别</li>
+<li>位运算</li>
+</ul>
+<h2 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h2><p>定义常量<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> (</span><br><span class="line">	Ldate         = <span class="number">1</span> &lt;&lt; <span class="literal">iota</span>     <span class="comment">// the date in the local time zone: 2009/01/23</span></span><br><span class="line">	Ltime                         <span class="comment">// the time in the local time zone: 01:23:23</span></span><br><span class="line">	Lmicroseconds                 <span class="comment">// microsecond resolution: 01:23:23.123123.  assumes Ltime.</span></span><br><span class="line">	Llongfile                     <span class="comment">// full file name and line number: /a/b/c/d.go:23</span></span><br><span class="line">	Lshortfile                    <span class="comment">// final file name element and line number: d.go:23. overrides Llongfile</span></span><br><span class="line">	LUTC                          <span class="comment">// if Ldate or Ltime is set, use UTC rather than the local time zone</span></span><br><span class="line">	LstdFlags     = Ldate | Ltime <span class="comment">// initial values for the standard logger</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure></p>
+<p>定义结构体<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Logger <span class="keyword">struct</span> &#123;</span><br><span class="line">	mu     sync.Mutex <span class="comment">// ensures atomic writes; protects the following fields</span></span><br><span class="line">	prefix <span class="keyword">string</span>     <span class="comment">// prefix to write at beginning of each line</span></span><br><span class="line">	flag   <span class="keyword">int</span>        <span class="comment">// properties</span></span><br><span class="line">	out    io.Writer  <span class="comment">// destination for output</span></span><br><span class="line">	buf    []<span class="keyword">byte</span>     <span class="comment">// for accumulating text to write</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>构造单例<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">(out io.Writer, prefix <span class="keyword">string</span>, flag <span class="keyword">int</span>)</span> *<span class="title">Logger</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;Logger&#123;out: out, prefix: prefix, flag: flag&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> std = New(os.Stderr, <span class="string">""</span>, LstdFlags)</span><br></pre></td></tr></table></figure></p>
+<p>日志输出<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *Logger)</span> <span class="title">Println</span><span class="params">(v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123; l.Output(<span class="number">2</span>, fmt.Sprintln(v...)) &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *Logger)</span> <span class="title">Output</span><span class="params">(calldepth <span class="keyword">int</span>, s <span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	now := time.Now() <span class="comment">// get this early.</span></span><br><span class="line">	<span class="keyword">var</span> file <span class="keyword">string</span></span><br><span class="line">	<span class="keyword">var</span> line <span class="keyword">int</span></span><br><span class="line">	l.mu.Lock()</span><br><span class="line">	<span class="keyword">defer</span> l.mu.Unlock()</span><br><span class="line">	<span class="keyword">if</span> l.flag&amp;(Lshortfile|Llongfile) != <span class="number">0</span> &#123;</span><br><span class="line">		<span class="comment">// Release lock while getting caller info - it's expensive.</span></span><br><span class="line">		l.mu.Unlock()</span><br><span class="line">		<span class="keyword">var</span> ok <span class="keyword">bool</span></span><br><span class="line">		_, file, line, ok = runtime.Caller(calldepth)</span><br><span class="line">		<span class="keyword">if</span> !ok &#123;</span><br><span class="line">			file = <span class="string">"???"</span></span><br><span class="line">			line = <span class="number">0</span></span><br><span class="line">		&#125;</span><br><span class="line">		l.mu.Lock()</span><br><span class="line">	&#125;</span><br><span class="line">	l.buf = l.buf[:<span class="number">0</span>]</span><br><span class="line">	l.formatHeader(&amp;l.buf, now, file, line)</span><br><span class="line">	l.buf = <span class="built_in">append</span>(l.buf, s...)</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(s) == <span class="number">0</span> || s[<span class="built_in">len</span>(s)<span class="number">-1</span>] != <span class="string">'\n'</span> &#123;</span><br><span class="line">		l.buf = <span class="built_in">append</span>(l.buf, <span class="string">'\n'</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	_, err := l.out.Write(l.buf)</span><br><span class="line">	<span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>构造日志头部<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *Logger)</span> <span class="title">formatHeader</span><span class="params">(buf *[]<span class="keyword">byte</span>, t time.Time, file <span class="keyword">string</span>, line <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	*buf = <span class="built_in">append</span>(*buf, l.prefix...)</span><br><span class="line">	<span class="keyword">if</span> l.flag&amp;(Ldate|Ltime|Lmicroseconds) != <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> l.flag&amp;LUTC != <span class="number">0</span> &#123;</span><br><span class="line">			t = t.UTC()</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> l.flag&amp;Ldate != <span class="number">0</span> &#123;</span><br><span class="line">			year, month, day := t.Date()</span><br><span class="line">			itoa(buf, year, <span class="number">4</span>)</span><br><span class="line">			*buf = <span class="built_in">append</span>(*buf, <span class="string">'/'</span>)</span><br><span class="line">			itoa(buf, <span class="keyword">int</span>(month), <span class="number">2</span>)</span><br><span class="line">			*buf = <span class="built_in">append</span>(*buf, <span class="string">'/'</span>)</span><br><span class="line">			itoa(buf, day, <span class="number">2</span>)</span><br><span class="line">			*buf = <span class="built_in">append</span>(*buf, <span class="string">' '</span>)</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> l.flag&amp;(Ltime|Lmicroseconds) != <span class="number">0</span> &#123;</span><br><span class="line">			hour, min, sec := t.Clock()</span><br><span class="line">			itoa(buf, hour, <span class="number">2</span>)</span><br><span class="line">			*buf = <span class="built_in">append</span>(*buf, <span class="string">':'</span>)</span><br><span class="line">			itoa(buf, min, <span class="number">2</span>)</span><br><span class="line">			*buf = <span class="built_in">append</span>(*buf, <span class="string">':'</span>)</span><br><span class="line">			itoa(buf, sec, <span class="number">2</span>)</span><br><span class="line">			<span class="keyword">if</span> l.flag&amp;Lmicroseconds != <span class="number">0</span> &#123;</span><br><span class="line">				*buf = <span class="built_in">append</span>(*buf, <span class="string">'.'</span>)</span><br><span class="line">				itoa(buf, t.Nanosecond()/<span class="number">1e3</span>, <span class="number">6</span>)</span><br><span class="line">			&#125;</span><br><span class="line">			*buf = <span class="built_in">append</span>(*buf, <span class="string">' '</span>)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> l.flag&amp;(Lshortfile|Llongfile) != <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> l.flag&amp;Lshortfile != <span class="number">0</span> &#123;</span><br><span class="line">			short := file</span><br><span class="line">			<span class="keyword">for</span> i := <span class="built_in">len</span>(file) - <span class="number">1</span>; i &gt; <span class="number">0</span>; i-- &#123;</span><br><span class="line">				<span class="keyword">if</span> file[i] == <span class="string">'/'</span> &#123;</span><br><span class="line">					short = file[i+<span class="number">1</span>:]</span><br><span class="line">					<span class="keyword">break</span></span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">			file = short</span><br><span class="line">		&#125;</span><br><span class="line">		*buf = <span class="built_in">append</span>(*buf, file...)</span><br><span class="line">		*buf = <span class="built_in">append</span>(*buf, <span class="string">':'</span>)</span><br><span class="line">		itoa(buf, line, <span class="number">-1</span>)</span><br><span class="line">		*buf = <span class="built_in">append</span>(*buf, <span class="string">": "</span>...)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>数字追加到字符串后<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">itoa</span><span class="params">(buf *[]<span class="keyword">byte</span>, i <span class="keyword">int</span>, wid <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="comment">// Assemble decimal in reverse order.</span></span><br><span class="line">	<span class="keyword">var</span> b [<span class="number">20</span>]<span class="keyword">byte</span></span><br><span class="line">	bp := <span class="built_in">len</span>(b) - <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> i &gt;= <span class="number">10</span> || wid &gt; <span class="number">1</span> &#123;</span><br><span class="line">		wid--</span><br><span class="line">		q := i / <span class="number">10</span></span><br><span class="line">		b[bp] = <span class="keyword">byte</span>(<span class="string">'0'</span> + i - q*<span class="number">10</span>)</span><br><span class="line">		bp--</span><br><span class="line">		i = q</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// i &lt; 10</span></span><br><span class="line">	b[bp] = <span class="keyword">byte</span>(<span class="string">'0'</span> + i)</span><br><span class="line">	*buf = <span class="built_in">append</span>(*buf, b[bp:]...)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="iota-常量计数器"><a href="#iota-常量计数器" class="headerlink" title="iota 常量计数器"></a>iota 常量计数器</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 每遇到一个const关键字，iota就会重置</span></span><br><span class="line"><span class="comment">// 如果中断iota，必须显式恢复！！！</span></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">	Ldate         = <span class="number">1</span> &lt;&lt; <span class="literal">iota</span>     <span class="comment">// 1 &lt;&lt; 0		1</span></span><br><span class="line">	Ltime                         <span class="comment">// 1 &lt;&lt; 1		2</span></span><br><span class="line">	Lmicroseconds                 <span class="comment">// 1 &lt;&lt; 2		4</span></span><br><span class="line">	Llongfile                     <span class="comment">// 1 &lt;&lt; 3		8</span></span><br><span class="line">	Lshortfile                    <span class="comment">// 1 &lt;&lt; 4		16</span></span><br><span class="line">	LUTC                          <span class="comment">// 1 &lt;&lt; 5		32</span></span><br><span class="line">	LstdFlags     = Ldate | Ltime <span class="comment">// 1 | 2		3</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h2 id="sync-Mutex-互斥锁"><a href="#sync-Mutex-互斥锁" class="headerlink" title="sync.Mutex 互斥锁"></a>sync.Mutex 互斥锁</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"sync"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> x = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 当Lock()时，资源会进入锁定状态。</span></span><br><span class="line"><span class="comment">// 当前只能有一个协程执行，只有Unlock()后限制才解开。 </span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">increment</span><span class="params">(wg *sync.WaitGroup, m *sync.Mutex)</span></span> &#123;</span><br><span class="line">	m.Lock()</span><br><span class="line">	x = x + <span class="number">1</span></span><br><span class="line">	m.Unlock()</span><br><span class="line">	wg.Done()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> w sync.WaitGroup</span><br><span class="line">	<span class="keyword">var</span> m sync.Mutex</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++ &#123;</span><br><span class="line">		w.Add(<span class="number">1</span>)</span><br><span class="line">		<span class="keyword">go</span> increment(&amp;w, &amp;m)</span><br><span class="line">	&#125;</span><br><span class="line">	w.Wait()</span><br><span class="line">	fmt.Println(<span class="string">"final value of x"</span>, x)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="单引号与双引号的区别"><a href="#单引号与双引号的区别" class="headerlink" title="单引号与双引号的区别"></a>单引号与双引号的区别</h2><p>单引号：rune类型<br>双引号：字符串类型</p>
+<blockquote>
+<p>rune 类型是int32的别名类型，可表示Unicode字符。</p>
+</blockquote>
+<h2 id="位运算"><a href="#位运算" class="headerlink" title="位运算"></a>位运算</h2><p>|：或运算<br>&amp;：与运算<br>&lt;&lt; 左移<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="number">1</span> | <span class="number">2</span>  ==&gt; <span class="number">0001</span> | <span class="number">0010</span> ==&gt; <span class="number">0011</span> ==&gt; <span class="number">3</span></span><br><span class="line"><span class="number">1</span> &amp; <span class="number">3</span>  ==&gt; <span class="number">0001</span> &amp; <span class="number">0011</span> ==&gt; <span class="number">0001</span> ==&gt; <span class="number">1</span></span><br><span class="line"><span class="number">1</span> &lt;&lt; <span class="number">2</span> ==&gt; <span class="number">0001</span> &lt;&lt; <span class="number">2</span> ==&gt; <span class="number">0100</span> ==&gt; <span class="number">4</span></span><br></pre></td></tr></table></figure></p>
+
+        </section>
+    </article>
+    
+    
+        <!-- livere 评论框 start -->
+        <div class="comment">
+            <div id="lv-container" data-id="city" data-uid="MTAyMC80MjgzNy8xOTM4NA=="></div>
+        </div>
+        <!-- livere 评论框 end -->
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#雨点"><span class="toc-number">1.</span> <span class="toc-text">雨点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结构"><span class="toc-number">2.</span> <span class="toc-text">结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#iota-常量计数器"><span class="toc-number">3.</span> <span class="toc-text">iota 常量计数器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sync-Mutex-互斥锁"><span class="toc-number">4.</span> <span class="toc-text">sync.Mutex 互斥锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#单引号与双引号的区别"><span class="toc-number">5.</span> <span class="toc-text">单引号与双引号的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#位运算"><span class="toc-number">6.</span> <span class="toc-text">位运算</span></a></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+<script type="text/javascript">
+  (function(d, s) {
+      var j, e = d.getElementsByTagName(s)[0];
+
+      if (typeof LivereTower === 'function') { return; }
+
+      j = d.createElement(s);
+      j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+      j.async = true;
+
+      e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2019 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>

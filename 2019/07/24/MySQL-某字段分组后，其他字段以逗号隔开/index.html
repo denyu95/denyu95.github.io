@@ -72,8 +72,8 @@
             
             
           </div>
-          <h2 id="建表"><a href="#建表" class="headerlink" title="建表"></a>建表</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">CREATE TABLE student (</span><br><span class="line">	age INT,</span><br><span class="line">	name VARCHAR(20)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-<h2 id="造数据"><a href="#造数据" class="headerlink" title="造数据"></a>造数据</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">INSERT INTO </span><br><span class="line">	student(age, name)</span><br><span class="line">VALUES</span><br><span class="line">	(15, &apos;陈x&apos;),</span><br><span class="line">	(16, &apos;冯xx&apos;),</span><br><span class="line">	(15, &apos;郑xx&apos;),</span><br><span class="line">	(16, &apos;王xx&apos;),</span><br><span class="line">	(15, &apos;刘xx&apos;)</span><br></pre></td></tr></table></figure>
+          <h2 id="建表"><a href="#建表" class="headerlink" title="建表"></a>建表</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> student (</span><br><span class="line">	age <span class="built_in">INT</span>,</span><br><span class="line">	<span class="keyword">name</span> <span class="built_in">VARCHAR</span>(<span class="number">20</span>)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h2 id="造数据"><a href="#造数据" class="headerlink" title="造数据"></a>造数据</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> </span><br><span class="line">	student(age, <span class="keyword">name</span>)</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">	(<span class="number">15</span>, <span class="string">'陈x'</span>),</span><br><span class="line">	(<span class="number">16</span>, <span class="string">'冯xx'</span>),</span><br><span class="line">	(<span class="number">15</span>, <span class="string">'郑xx'</span>),</span><br><span class="line">	(<span class="number">16</span>, <span class="string">'王xx'</span>),</span><br><span class="line">	(<span class="number">15</span>, <span class="string">'刘xx'</span>)</span><br></pre></td></tr></table></figure>
 <table>
 <thead>
 <tr>
@@ -104,7 +104,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT </span><br><span class="line">	age, GROUP_CONCAT(name SEPARATOR &apos;,&apos;) AS names </span><br><span class="line">FROM</span><br><span class="line">	student</span><br><span class="line">GROUP BY</span><br><span class="line">	age</span><br></pre></td></tr></table></figure>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">	age, <span class="keyword">GROUP_CONCAT</span>(<span class="keyword">name</span> SEPARATOR <span class="string">','</span>) <span class="keyword">AS</span> <span class="keyword">names</span> </span><br><span class="line"><span class="keyword">FROM</span></span><br><span class="line">	student</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span></span><br><span class="line">	age</span><br></pre></td></tr></table></figure>
 <table>
 <thead>
 <tr>

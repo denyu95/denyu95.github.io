@@ -87,7 +87,7 @@
 </ol>
 <h2 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h2><h3 id="nginx-没有访问目录的权限"><a href="#nginx-没有访问目录的权限" class="headerlink" title="nginx 没有访问目录的权限"></a>nginx 没有访问目录的权限</h3><ol>
 <li><p>查看nginx.conf文件，查找到如下:</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">	listen       80;</span><br><span class="line">	server_name  localhost;</span><br><span class="line">	location / &#123;</span><br><span class="line">	    root   /home/xxx/website;</span><br><span class="line">	    index  index.html index.htm;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">	<span class="attribute">listen</span>       <span class="number">80</span>;</span><br><span class="line">	<span class="attribute">server_name</span>  localhost;</span><br><span class="line">	<span class="attribute">location</span> / &#123;</span><br><span class="line">	    <span class="attribute">root</span>   /home/xxx/website;</span><br><span class="line">	    <span class="attribute">index</span>  index.html index.htm;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>查看/home/xxx/website的权限</p>
 </li>

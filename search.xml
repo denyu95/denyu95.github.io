@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>Nginx搭建文件服务器，403Forbidden的解决</title>
+      <link href="/2019/08/15/Nginx%E6%90%AD%E5%BB%BA%E6%96%87%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%8C403Forbidden%E7%9A%84%E8%A7%A3%E5%86%B3/"/>
+      <url>/2019/08/15/Nginx%E6%90%AD%E5%BB%BA%E6%96%87%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%8C403Forbidden%E7%9A%84%E8%A7%A3%E5%86%B3/</url>
+      
+        <content type="html"><![CDATA[<h2 id="引起403的原因"><a href="#引起403的原因" class="headerlink" title="引起403的原因"></a>引起403的原因</h2><ol><li>nginx 没有访问目录的权限</li><li>nginx的目录里面没有默认文档</li><li>开启了SELinux</li></ol><h2 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h2><h3 id="nginx-没有访问目录的权限"><a href="#nginx-没有访问目录的权限" class="headerlink" title="nginx 没有访问目录的权限"></a>nginx 没有访问目录的权限</h3><ol><li><p>查看nginx.conf文件，查找到如下:</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">listen       80;</span><br><span class="line">server_name  localhost;</span><br><span class="line">location / &#123;</span><br><span class="line">    root   /home/xxx/website;</span><br><span class="line">    index  index.html index.htm;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li><li><p>查看/home/xxx/website的权限</p></li><li>在nginx.conf前面加上 <code>user xxx;</code> ，其中xxx为拥有权限的用户</li></ol><h3 id="nginx的目录里面没有默认文档"><a href="#nginx的目录里面没有默认文档" class="headerlink" title="nginx的目录里面没有默认文档"></a>nginx的目录里面没有默认文档</h3><ol><li>检查 /home/xxx/website 下是否有配置的默认文件，即index配置项。</li><li>在 /home/xxx/website 下创建index.html</li></ol><h3 id="开启了SElinux"><a href="#开启了SElinux" class="headerlink" title="开启了SElinux"></a>开启了SElinux</h3><p>SElinux是一种安全子系统，它控制程序只能访问特定文件  </p><ol><li>查看SElinux状态：<code>/usr/sbin/sestatus -v</code></li><li>修改 /etc/selinux/config 文件，将<code>SELINUX=enforcing</code> 改为 <code>SELINUX=disabled</code> 后重启计算机</li></ol>]]></content>
+      
+      
+      <categories>
+          
+          <category> Linux </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 疑难杂症 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>禁用macos虚拟内存</title>
       <link href="/2019/08/13/%E7%A6%81%E7%94%A8macos%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/"/>
       <url>/2019/08/13/%E7%A6%81%E7%94%A8macos%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/</url>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang=zh-CN>
+  <head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content="denyu">
+  
+    <link rel="icon" href="/favicon.ico">
+  
+    
+  <title>Nginx搭建文件服务器，403Forbidden的解决 | Mr·陈</title>
+  <script src="/lib/jquery.js"></script>
+  <script src="/js/script.js"></script>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class="logo" href="/">
+      <span>Mr·陈</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id="post">
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>Nginx搭建文件服务器，403Forbidden的解决</h1>
+          <div class="post-meta">
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2019年08月15日</time>
+            
+              | <i class="fa fa-folder-open-o" aria-hidden="true"></i> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Linux/">Linux</a>
+  </div>
+
+
+
+            
+            
+              | 
+                  <i class="fa fa-tag" aria-hidden="true"></i>
+                
+               
+  <a href="/tags/#疑难杂症" class="tag">疑难杂症</a>
+
+
+            
+          </div>
+          <h2 id="引起403的原因"><a href="#引起403的原因" class="headerlink" title="引起403的原因"></a>引起403的原因</h2><ol>
+<li>nginx 没有访问目录的权限</li>
+<li>nginx的目录里面没有默认文档</li>
+<li>开启了SELinux</li>
+</ol>
+<h2 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h2><h3 id="nginx-没有访问目录的权限"><a href="#nginx-没有访问目录的权限" class="headerlink" title="nginx 没有访问目录的权限"></a>nginx 没有访问目录的权限</h3><ol>
+<li><p>查看nginx.conf文件，查找到如下:</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">	listen       80;</span><br><span class="line">	server_name  localhost;</span><br><span class="line">	location / &#123;</span><br><span class="line">	    root   /home/xxx/website;</span><br><span class="line">	    index  index.html index.htm;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看/home/xxx/website的权限</p>
+</li>
+<li>在nginx.conf前面加上 <code>user xxx;</code> ，其中xxx为拥有权限的用户</li>
+</ol>
+<h3 id="nginx的目录里面没有默认文档"><a href="#nginx的目录里面没有默认文档" class="headerlink" title="nginx的目录里面没有默认文档"></a>nginx的目录里面没有默认文档</h3><ol>
+<li>检查 /home/xxx/website 下是否有配置的默认文件，即index配置项。</li>
+<li>在 /home/xxx/website 下创建index.html</li>
+</ol>
+<h3 id="开启了SElinux"><a href="#开启了SElinux" class="headerlink" title="开启了SElinux"></a>开启了SElinux</h3><p>SElinux是一种安全子系统，它控制程序只能访问特定文件  </p>
+<ol>
+<li>查看SElinux状态：<code>/usr/sbin/sestatus -v</code></li>
+<li>修改 /etc/selinux/config 文件，将<code>SELINUX=enforcing</code> 改为 <code>SELINUX=disabled</code> 后重启计算机</li>
+</ol>
+
+        </section>
+    </article>
+    
+    
+        <!-- livere 评论框 start -->
+        <div class="comment">
+            <div id="lv-container" data-id="city" data-uid="MTAyMC80MjgzNy8xOTM4NA=="></div>
+        </div>
+        <!-- livere 评论框 end -->
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#引起403的原因"><span class="toc-number">1.</span> <span class="toc-text">引起403的原因</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解决办法"><span class="toc-number">2.</span> <span class="toc-text">解决办法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#nginx-没有访问目录的权限"><span class="toc-number">2.1.</span> <span class="toc-text">nginx 没有访问目录的权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#nginx的目录里面没有默认文档"><span class="toc-number">2.2.</span> <span class="toc-text">nginx的目录里面没有默认文档</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#开启了SElinux"><span class="toc-number">2.3.</span> <span class="toc-text">开启了SElinux</span></a></li></ol></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+<script type="text/javascript">
+  (function(d, s) {
+      var j, e = d.getElementsByTagName(s)[0];
+
+      if (typeof LivereTower === 'function') { return; }
+
+      j = d.createElement(s);
+      j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+      j.async = true;
+
+      e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2019 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>

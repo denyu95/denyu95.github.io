@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>MySQL 有关时间的坑</title>
+      <link href="/2019/09/02/MySQL-%E6%9C%89%E5%85%B3%E6%97%B6%E9%97%B4%E7%9A%84%E5%9D%91/"/>
+      <url>/2019/09/02/MySQL-%E6%9C%89%E5%85%B3%E6%97%B6%E9%97%B4%E7%9A%84%E5%9D%91/</url>
+      
+        <content type="html"><![CDATA[<h2 id="缘由"><a href="#缘由" class="headerlink" title="缘由"></a>缘由</h2><p>前端更新某条数据，即刻同步查询该条数据（该数据的某个状态是需要跟当前时间比对得出），状态概率性未变化，再刷新页面状态正常。</p><h2 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h2><p>数据库会对datetime类型的四舍五入，导致如果是即时请求数据并且依赖该时间类型的数据可能会出现异常。</p><h2 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h2><p>两种解决方式</p><ol><li>使用时间戳替代datetime类型数据</li><li>代码中适当将时间减少1s再存入数据库</li></ol>]]></content>
+      
+      
+      <categories>
+          
+          <category> MySQL </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 疑难杂症 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Nginx搭建文件服务器，403Forbidden的解决</title>
       <link href="/2019/08/15/Nginx%E6%90%AD%E5%BB%BA%E6%96%87%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%8C403Forbidden%E7%9A%84%E8%A7%A3%E5%86%B3/"/>
       <url>/2019/08/15/Nginx%E6%90%AD%E5%BB%BA%E6%96%87%E4%BB%B6%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%8C403Forbidden%E7%9A%84%E8%A7%A3%E5%86%B3/</url>

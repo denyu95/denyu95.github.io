@@ -4,6 +4,25 @@
   
     
     <entry>
+      <title>MySQL 重复插入时insert更改为update更新操作</title>
+      <link href="/2019/09/23/MySQL-%E9%87%8D%E5%A4%8D%E6%8F%92%E5%85%A5%E6%97%B6insert%E6%9B%B4%E6%94%B9%E4%B8%BAupdate%E6%9B%B4%E6%96%B0%E6%93%8D%E4%BD%9C/"/>
+      <url>/2019/09/23/MySQL-%E9%87%8D%E5%A4%8D%E6%8F%92%E5%85%A5%E6%97%B6insert%E6%9B%B4%E6%94%B9%E4%B8%BAupdate%E6%9B%B4%E6%96%B0%E6%93%8D%E4%BD%9C/</url>
+      
+        <content type="html"><![CDATA[<h2 id="缘由"><a href="#缘由" class="headerlink" title="缘由"></a>缘由</h2><p>在高并发下，录入数据可能出现重复录入的情况。MySQL关键字 <code>ON DUPLICATE KEY UPDATE</code> 可以判断数据库是否存在此主键，如果存在就更新。</p><h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span></span><br><span class="line">t_xxx (<span class="keyword">id</span>, <span class="keyword">name</span>, updateDate)</span><br><span class="line"><span class="keyword">VALUE</span></span><br><span class="line">(<span class="number">1</span>, <span class="string">'张三'</span>, <span class="string">'2019-08-09 12:00:00'</span>)</span><br><span class="line"><span class="keyword">ON</span> <span class="keyword">DUPLICATE</span> <span class="keyword">KEY</span> <span class="keyword">UPDATE</span></span><br><span class="line"><span class="keyword">name</span> = <span class="string">'李四'</span>,</span><br><span class="line">updateDate = <span class="string">'2019-08-09 12:00:00'</span>;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> MySQL </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>群晖上Docker中安装Calibre</title>
       <link href="/2019/09/05/%E7%BE%A4%E6%99%96%E4%B8%8ADocker%E4%B8%AD%E5%AE%89%E8%A3%85Calibre/"/>
       <url>/2019/09/05/%E7%BE%A4%E6%99%96%E4%B8%8ADocker%E4%B8%AD%E5%AE%89%E8%A3%85Calibre/</url>

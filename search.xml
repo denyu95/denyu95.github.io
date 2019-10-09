@@ -4,6 +4,25 @@
   
     
     <entry>
+      <title>Ubuntu16.04 php环境搭建</title>
+      <link href="/2019/10/09/Ubuntu16-04-php%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"/>
+      <url>/2019/10/09/Ubuntu16-04-php%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</url>
+      
+        <content type="html"><![CDATA[<h2 id="安装Nginx"><a href="#安装Nginx" class="headerlink" title="安装Nginx"></a>安装Nginx</h2><ol><li>安装</li></ol><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install nginx -y</span><br></pre></td></tr></table></figure><ol start="2"><li>启动</li></ol><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo service nginx start</span><br></pre></td></tr></table></figure><ol start="3"><li>修改配置文件</li></ol><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo vim /etc/nginx/sites-available/default</span><br></pre></td></tr></table></figure><figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">location</span> <span class="regexp">~ \.php$</span> &#123;</span><br><span class="line">             <span class="attribute">include</span> snippets/fastcgi-php.conf;</span><br><span class="line">             <span class="comment"># With php7.0-cgi alone:</span></span><br><span class="line">             <span class="attribute">fastcgi_pass</span> <span class="number">127.0.0.1:9000</span>;</span><br><span class="line">             <span class="attribute">root</span> /home/parallels/PhpstormProjects/test;</span><br><span class="line">             <span class="comment"># With php7.0-fpm:</span></span><br><span class="line">          <span class="comment"># fastcgi_pass unix:/run/php/php7.0-fpm.sock;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="安装PHP"><a href="#安装PHP" class="headerlink" title="安装PHP"></a>安装PHP</h2><ol><li>安装</li></ol><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install php -y</span><br></pre></td></tr></table></figure><ol start="2"><li>启动</li></ol><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">/etc/init.d/php7.0-fpm start</span><br></pre></td></tr></table></figure><ol start="3"><li>修改配置文件</li></ol><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo vim /etc/php/7.0/fpm/pool.d/www.conf</span><br></pre></td></tr></table></figure><blockquote><p>使用tcp的方式与nginx通信</p><p>listen = /var/run/php/php7.0-fpm.sock 改为 listen = 127.0.0.1:9000</p></blockquote><h2 id="下载xdebug扩展"><a href="#下载xdebug扩展" class="headerlink" title="下载xdebug扩展"></a>下载xdebug扩展</h2><ol><li>安装</li></ol><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install php-xdebug</span><br></pre></td></tr></table></figure><ol start="2"><li>修改配置文件</li></ol><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo vim /etc/php/7.0/mods-available/xdebug.ini</span><br></pre></td></tr></table></figure><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">zend_extension=xdebug.so</span><br><span class="line">xdebug.profiler_enable = 1</span><br><span class="line">xdebug.profiler_output_dir = "/tmp"</span><br><span class="line">xdebug.remote_enable = 1</span><br><span class="line">xdebug.remote_port = 9001</span><br><span class="line">xdebug.remote_host = "www.paper.com"</span><br></pre></td></tr></table></figure><ol start="3"><li>重启</li></ol><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">/etc/init.d/php7.0-fpm restart</span><br></pre></td></tr></table></figure><h2 id="配置phpstorm"><a href="#配置phpstorm" class="headerlink" title="配置phpstorm"></a>配置phpstorm</h2><ol><li>Settings -&gt; Languages &amp; Frameworks -&gt; PHP -&gt; PHP language level: 7 -&gt; CLI Interpreter 点击…</li><li>点击+ -&gt; PHP executable: /usr/bin/php</li><li>出现Debugger: Xdebug 2.4.0即配置完成</li></ol><h2 id="浏览器安装"><a href="#浏览器安装" class="headerlink" title="浏览器安装"></a>浏览器安装</h2><p>chrome插件商店搜索xdebug安装</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> PHP </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>MySQL 重复插入时insert更改为update更新操作</title>
       <link href="/2019/09/23/MySQL-%E9%87%8D%E5%A4%8D%E6%8F%92%E5%85%A5%E6%97%B6insert%E6%9B%B4%E6%94%B9%E4%B8%BAupdate%E6%9B%B4%E6%96%B0%E6%93%8D%E4%BD%9C/"/>
       <url>/2019/09/23/MySQL-%E9%87%8D%E5%A4%8D%E6%8F%92%E5%85%A5%E6%97%B6insert%E6%9B%B4%E6%94%B9%E4%B8%BAupdate%E6%9B%B4%E6%96%B0%E6%93%8D%E4%BD%9C/</url>

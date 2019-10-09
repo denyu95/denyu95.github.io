@@ -58,6 +58,45 @@
   <div class="posts-list">
     
       <section>
+        <a href="/2019/04/29/定制go-get的包路径/">
+          <h3 class="post-head">
+            定制go get的包路径
+          </h3>
+        </a>
+        
+        <div class="post-content">
+          
+            
+              
+                <h2 id="缘由"><a href="#缘由" class="headerlink" title="缘由"></a>缘由</h2><p>当工程使用gitlab作为代码管理工具，各个工程会按照群组分类，但代码中引入包名的时候却不希望路径带有群组，又或者gitlab域名带有端口号。这样go get下来的路径会不美观。如：</p>
+              
+          
+        </div>
+        <div class="post-meta">
+          <i class="fa fa-calendar" aria-hidden="true"></i> <time>2019年04月29日</time>
+          
+            | <i class="fa fa-folder-open-o" aria-hidden="true"></i> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Go/">Go</a>
+  </div>
+
+
+
+          
+          
+            <span class="seperator">|</span>
+             
+                <i class="fa fa-tag" aria-hidden="true"></i>
+              
+             
+  <a href="/tags/#随笔" class="tag">随笔</a>
+
+
+          
+        </div>
+      </section>
+    
+      <section>
         <a href="/2019/04/25/ubuntu开机不启动图形界面/">
           <h3 class="post-head">
             ubuntu开机不启动图形界面
@@ -204,45 +243,6 @@
         </div>
       </section>
     
-      <section>
-        <a href="/2019/03/22/Linux处理僵尸进程/">
-          <h3 class="post-head">
-            Linux处理僵尸进程
-          </h3>
-        </a>
-        
-        <div class="post-content">
-          
-            
-              
-                <h2 id="僵尸进程产生的原因"><a href="#僵尸进程产生的原因" class="headerlink" title="僵尸进程产生的原因"></a>僵尸进程产生的原因</h2><p>当一个进程被终止，其父进程和内核还是需要知道进程的有些信息，如进程的ID号、进程的退出状态、进程运行的CPU时间等。进程在终止时回收内核分配给它的内存、关闭它打开的所有文件等，但还是会保留极少信息，以供父进程使用。父进程调用 wait / waitid 获取子进程信息以释放保留的那段信息。 </p>
-              
-          
-        </div>
-        <div class="post-meta">
-          <i class="fa fa-calendar" aria-hidden="true"></i> <time>2019年03月22日</time>
-          
-            | <i class="fa fa-folder-open-o" aria-hidden="true"></i> 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Linux/">Linux</a>
-  </div>
-
-
-
-          
-          
-            <span class="seperator">|</span>
-             
-                <i class="fa fa-tag" aria-hidden="true"></i>
-              
-             
-  <a href="/tags/#疑难杂症" class="tag">疑难杂症</a>
-
-
-          
-        </div>
-      </section>
-    
   </div>
   <aside>
     
@@ -273,7 +273,7 @@
           文章分类
         </h1>
         <div class="content">
-          <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Go/">Go</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MacOS/">MacOS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/压测/">压测</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/懒/">懒</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/程序改变生活/">程序改变生活</a></li></ul>
+          <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Go/">Go</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MacOS/">MacOS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/MySQL/">MySQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/PHP/">PHP</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/压测/">压测</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/懒/">懒</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/程序改变生活/">程序改变生活</a></li></ul>
         </div>
       </div>
     

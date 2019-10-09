@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang=zh-CN>
+  <head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="description" content>
+  <meta name="keywords" content="denyu">
+  
+    <link rel="icon" href="/favicon.ico">
+  
+    
+  <title>Ubuntu16.04 php环境搭建 | Mr·陈</title>
+  <script src="/lib/jquery.js"></script>
+  <script src="/js/script.js"></script>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lib/jquery.fancybox.min.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header>
+  <div class="header-container">
+    <a class="logo" href="/">
+      <span>Mr·陈</span>
+    </a>
+    <ul class="right-header">
+      
+        <li class="nav-item">
+          
+            <a href="/" class="item-link">首页</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/about" class="item-link">关于</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/archives" class="item-link">归档</a>
+          
+        </li>
+      
+        <li class="nav-item">
+          
+            <a href="/tags" class="item-link">标签</a>
+          
+        </li>
+      
+    </ul>
+  </div>
+</header>
+
+  <main id="post">
+  <div class="content">
+    <article>
+        <section class="content markdown-body">
+          <h1>Ubuntu16.04 php环境搭建</h1>
+          <div class="post-meta">
+            <i class="fa fa-calendar" aria-hidden="true"></i> <time>2019年10月09日</time>
+            
+              | <i class="fa fa-folder-open-o" aria-hidden="true"></i> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PHP/">PHP</a>
+  </div>
+
+
+
+            
+            
+          </div>
+          <h2 id="安装Nginx"><a href="#安装Nginx" class="headerlink" title="安装Nginx"></a>安装Nginx</h2><ol>
+<li>安装</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install nginx -y</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>启动</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo service nginx start</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>修改配置文件</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo vim /etc/nginx/sites-available/default</span><br></pre></td></tr></table></figure>
+<figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">location</span> <span class="regexp">~ \.php$</span> &#123;</span><br><span class="line">             <span class="attribute">include</span> snippets/fastcgi-php.conf;</span><br><span class="line">             <span class="comment"># With php7.0-cgi alone:</span></span><br><span class="line">             <span class="attribute">fastcgi_pass</span> <span class="number">127.0.0.1:9000</span>;</span><br><span class="line">             <span class="attribute">root</span> /home/parallels/PhpstormProjects/test;</span><br><span class="line">             <span class="comment"># With php7.0-fpm:</span></span><br><span class="line">     	     <span class="comment"># fastcgi_pass unix:/run/php/php7.0-fpm.sock;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="安装PHP"><a href="#安装PHP" class="headerlink" title="安装PHP"></a>安装PHP</h2><ol>
+<li>安装</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install php -y</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>启动</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">/etc/init.d/php7.0-fpm start</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>修改配置文件</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo vim /etc/php/7.0/fpm/pool.d/www.conf</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>使用tcp的方式与nginx通信</p>
+<p>listen = /var/run/php/php7.0-fpm.sock 改为 listen = 127.0.0.1:9000</p>
+</blockquote>
+<h2 id="下载xdebug扩展"><a href="#下载xdebug扩展" class="headerlink" title="下载xdebug扩展"></a>下载xdebug扩展</h2><ol>
+<li>安装</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install php-xdebug</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>修改配置文件</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo vim /etc/php/7.0/mods-available/xdebug.ini</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">zend_extension=xdebug.so</span><br><span class="line">xdebug.profiler_enable = 1</span><br><span class="line">xdebug.profiler_output_dir = "/tmp"</span><br><span class="line">xdebug.remote_enable = 1</span><br><span class="line">xdebug.remote_port = 9001</span><br><span class="line">xdebug.remote_host = "www.paper.com"</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>重启</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">/etc/init.d/php7.0-fpm restart</span><br></pre></td></tr></table></figure>
+<h2 id="配置phpstorm"><a href="#配置phpstorm" class="headerlink" title="配置phpstorm"></a>配置phpstorm</h2><ol>
+<li>Settings -&gt; Languages &amp; Frameworks -&gt; PHP -&gt; PHP language level: 7 -&gt; CLI Interpreter 点击…</li>
+<li>点击+ -&gt; PHP executable: /usr/bin/php</li>
+<li>出现Debugger: Xdebug 2.4.0即配置完成</li>
+</ol>
+<h2 id="浏览器安装"><a href="#浏览器安装" class="headerlink" title="浏览器安装"></a>浏览器安装</h2><p>chrome插件商店搜索xdebug安装</p>
+
+        </section>
+    </article>
+    
+    
+        <!-- livere 评论框 start -->
+        <div class="comment">
+            <div id="lv-container" data-id="city" data-uid="MTAyMC80MjgzNy8xOTM4NA=="></div>
+        </div>
+        <!-- livere 评论框 end -->
+        
+  </div>
+  <aside>
+    
+    <div class="toc-container">
+        <h1>目录</h1>
+        <div class="content">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装Nginx"><span class="toc-number">1.</span> <span class="toc-text">安装Nginx</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装PHP"><span class="toc-number">2.</span> <span class="toc-text">安装PHP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#下载xdebug扩展"><span class="toc-number">3.</span> <span class="toc-text">下载xdebug扩展</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置phpstorm"><span class="toc-number">4.</span> <span class="toc-text">配置phpstorm</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#浏览器安装"><span class="toc-number">5.</span> <span class="toc-text">浏览器安装</span></a></li></ol>
+        </div>
+    </div>
+    
+  </aside>
+</main>
+
+
+<script type="text/javascript">
+  (function(d, s) {
+      var j, e = d.getElementsByTagName(s)[0];
+
+      if (typeof LivereTower === 'function') { return; }
+
+      j = d.createElement(s);
+      j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+      j.async = true;
+
+      e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+
+  <footer>
+  <div class="copyright">
+    <div>
+      &copy; 2019 | Powered by <a href="https://hexo.io" target="_blank">Hexo</a>&nbsp
+    </div>
+    <div>
+      Theme by <a href="https://github.com/lewis-geek/hexo-theme-Aath" target="_blank">Aath</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="/lib/in-view.min.js"></script>
+<script src="/lib/lodash.min.js"></script>
+<script>
+  var isDown = true
+  var oldY = 0
+  inView.offset(50)
+
+  document.body.addEventListener('touchstart', function(){});
+  
+  window.addEventListener('scroll', _.throttle(e => {
+    var currentY = window.scrollY
+    if((oldY - currentY) < 0) {
+      isDown = true
+    } else {
+      isDown = false
+    }
+    oldY = currentY
+  }, 250))
+
+  $("article img").each(function() {
+      var strA = "<a data-fancybox='gallery' href='" + this.src + "'></a>";
+      $(this).wrapAll(strA);
+  });
+
+  $('.toc-link').each(function() {
+      var href = $(this).attr("href");
+      
+      inView(href).on('exit', () => {
+        if (isDown) {
+          handleActive(href)
+        }
+      })
+
+      inView(href).on('enter', () => {
+        if (!isDown) {
+          handleActive(href)
+        }
+      })
+
+      this.onclick = function(e) {
+        var pos = $(href).offset().top - 10;
+        $("html,body").animate({scrollTop: pos}, 300);
+        setTimeout(() => {
+          handleActive(href)
+        }, 350)
+        return false
+      }
+  })
+
+  function handleActive(href) {
+    document.querySelectorAll('.toc-link').forEach(elm => {
+      elm.classList.remove('active')
+    })
+    document.querySelector(".toc [href='"+ href +"']").classList.add('active')
+  }
+</script>
+<script src="/lib/jquery.fancybox.min.js"></script>
+
+
+</body>
+</html>
